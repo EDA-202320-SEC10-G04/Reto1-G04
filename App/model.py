@@ -50,7 +50,18 @@ def new_data_structs():
     manera vacía para posteriormente almacenar la información.
     """
     #TODO: Inicializar las estructuras de datos
-    pass
+    data = {'date': None,
+               'home_team': None,
+               'away_team': None,
+            }
+
+    data['date'] = lt.newList('SINGLE_LINKED')
+    data['home_team'] = lt.newList('ARRAY_LIST',
+                                    cmpfunction=compareauthors)
+    data['away_team'] = lt.newList('ARRAY_LIST',
+                                 cmpfunction=comparetagnames)
+    
+    return data
 
 
 # Funciones para agregar informacion al modelo
