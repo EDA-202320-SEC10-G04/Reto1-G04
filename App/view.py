@@ -68,7 +68,7 @@ def load_data(control):
     Carga los datos
     """
     #TODO: Realizar la carga de datos
-    date,home_team,away_team = controller.loadData(control)
+    date,home_team,away_team = controller.load_data(control)
     return date,home_team,away_team
     
 def print_data(control, id):
