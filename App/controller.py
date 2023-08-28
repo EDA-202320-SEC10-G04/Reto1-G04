@@ -24,7 +24,9 @@ import config as cf
 import model
 import time
 import csv
+import csv
 
+csv.field_size_limit(2147483647)
 
 """
 El controlador se encarga de mediar entre la vista y el modelo.
@@ -36,7 +38,8 @@ def new_controller():
     Crea una instancia del modelo
     """
     #TODO: Llamar la función del modelo que crea las estructuras de datos
-    pass
+    modelo = models.Model()
+    return modelo
 
 
 # Funciones para la carga de datos
