@@ -47,18 +47,52 @@ def new_controller():
 
 # Funciones para la carga de datos
 
-def load_data(control, filename):
+def loadData(control):
     """
-    Carga los datos del reto
+    Carga los datos de los archivos y cargar los datos en la
+    estructura de datos
     """
-    # TODO: Realizar la carga de datos
-    booksfile = cf.data_dir + 'GoodReads/books.csv'
-    input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
-    for book in input_file:
+    catalog = control['model']
+    date,home_team,away_team,team,scorer,minute,own_goal,penalty = loadgoalscores(catalog)
+    tags = loadTags(catalog)
+    booktags = loadBooksTags(catalog)
+    sortBooks(catalog)
+    return books, authors, tags, booktags
+
+
+def loadgoalscores(catalog):
+    """
+    Carga los libros del archivo.  Por cada libro se toman sus autores y por
+    cada uno de ellos, se crea en la lista de autores, a dicho autor y una
+    referencia al libro que se esta procesando.
+    """
+    goalsfile = cf.data_dir + 'Data/football/goalscorers-utf8-small.csv'
+    input_file = csv.DictReader(open(goalsfile, encoding='utf-8'))
+    for goal in input_file:
         model.addBook(catalog, book)
     return model.bookSize(catalog), model.authorSize(catalog)
-    
 
+
+def loadTags(catalog):
+    """
+    Carga todos los tags del archivo y los agrega a la lista de tags
+    """
+    tagsfile = cf.data_dir + 'GoodReads/tags.csv'
+    input_file = csv.DictReader(open(tagsfile, encoding='utf-8'))
+    for tag in input_file:
+        model.addTag(catalog, tag)
+    return model.tagSize(catalog)
+
+
+def loadBooksTags(catalog):
+    """
+    Carga la información que asocia tags con libros.
+    """
+    booktagsfile = cf.data_dir + 'GoodReads/book_tags.csv'
+    input_file = csv.DictReader(open(booktagsfile, encoding='utf-8'))
+    for booktag in input_file:
+        model.addBookTag(catalog, booktag)
+    return model.bookTagSize(catalog)
 
 # Funciones de ordenamiento
 

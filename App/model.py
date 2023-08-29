@@ -50,14 +50,14 @@ def new_data_structs():
     manera vacía para posteriormente almacenar la información.
     """
     #TODO: Inicializar las estructuras de datos
-    data = {'number_match': None,
-               'team': None,
-               'condition': None,
+    data = {'goalscore': None,
+               'results': None,
+               'shootouts': None,
             }
 
-    data['number_match'] = lt.newList('SINGLE_LINKED')
-    data['team'] = lt.newList('ARRAY_LIST')
-    data['condition'] = lt.newList('ARRAY_LIST',)
+    data['goalscore'] = lt.newList('ARRAY_LIST')
+    data['results'] = lt.newList('ARRAY_LIST')
+    data['shootouts'] = lt.newList('ARRAY_LIST')
     
     return data
 
