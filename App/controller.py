@@ -42,7 +42,7 @@ def new_controller():
         "model" : None
     }
     control['model'] = model.new_data_structs()
-    return contro
+    return control
 
 
 # Funciones para la carga de datos
@@ -52,7 +52,12 @@ def load_data(control, filename):
     Carga los datos del reto
     """
     # TODO: Realizar la carga de datos
-    pass
+    booksfile = cf.data_dir + 'GoodReads/books.csv'
+    input_file = csv.DictReader(open(booksfile, encoding='utf-8'))
+    for book in input_file:
+        model.addBook(catalog, book)
+    return model.bookSize(catalog), model.authorSize(catalog)
+    
 
 
 # Funciones de ordenamiento
