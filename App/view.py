@@ -68,8 +68,8 @@ def load_data(control):
     Carga los datos
     """
     #TODO: Realizar la carga de datos
-    number_match,team,condition = controller.load_data(control)
-    return number_match,team,condition
+    goalscore, results, shootouts = controller.loadData(control)
+    return goalscore, results, shootouts 
     
 def print_data(control, id):
     """
@@ -156,7 +156,10 @@ if __name__ == "__main__":
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
             print("Cargando información de los archivos ....\n")
-            data = load_data(control)
+            gs, rs, so = load_data(control)
+            print('Match result count: ' + str(len(gs)))
+            print('Goal scorers count: ' + str(len(rs)))
+            print('shootout-penalty definition count: ' + str(len(so)))
         elif int(inputs) == 2:
             print_req_1(control)
 

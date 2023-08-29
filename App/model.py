@@ -55,9 +55,9 @@ def new_data_structs():
                'shootouts': None,
             }
 
-    data['goalscore'] = lt.newList('ARRAY_LIST')
-    data['results'] = lt.newList('ARRAY_LIST')
-    data['shootouts'] = lt.newList('ARRAY_LIST')
+    data['goalscore'] = lt.newList('ARRAY_LIST',  filename = "Data/football/goalscorers-utf8-small.csv")
+    data['results'] = lt.newList('ARRAY_LIST', filename = "Data/football/results-utf8-small.csv")
+    data['shootouts'] = lt.newList('ARRAY_LIST', filename = "Data/football/shootouts-utf8-small.csv")
     
     return data
 
@@ -176,23 +176,11 @@ def compare(data_1, data_2):
 # Funciones de ordenamiento
 
 
-def sort_criteria(data_1, data_2):
-    """sortCriteria criterio de ordenamiento para las funciones de ordenamiento
-
-    Args:
-        data1 (_type_): _description_
-        data2 (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    #TODO: Crear función comparadora para ordenar
-    pass
+def compareratings(book1, book2):
+    return (float(book1['average_rating']) > float(book2['average_rating']))
 
 
-def sort(data_structs):
-    """
-    Función encargada de ordenar la lista con los datos
-    """
-    #TODO: Crear función de ordenamiento
-    pass
+# Funciones de ordenamiento
+
+def sortBooks(catalog):
+    sa.sort(catalog['books'], compareratings)

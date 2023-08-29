@@ -52,12 +52,14 @@ def loadData(control):
     Carga los datos de los archivos y cargar los datos en la
     estructura de datos
     """
-    catalog = control['model']
-    date,home_team,away_team,team,scorer,minute,own_goal,penalty = loadgoalscores(catalog)
-    tags = loadTags(catalog)
-    booktags = loadBooksTags(catalog)
-    sortBooks(catalog)
-    return books, authors, tags, booktags
+    """goalscore, results, shootouts = model.new_data_structs(control)
+    """
+    data = control['model']
+    goalscore = data['goalscore']
+    results = data['results']
+    shootouts = data['shootouts']
+    sort(data)
+    return goalscore, results, shootouts
 
 
 def loadgoalscores(catalog):
