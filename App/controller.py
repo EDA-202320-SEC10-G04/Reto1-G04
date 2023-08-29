@@ -37,30 +37,58 @@ def new_controller():
     """
     Crea una instancia del modelo
     """
-    #TODO: Llamar la función del modelo que crea las estructuras de datos
-    modelo = models.Model()
-    return modelo
+    # Llamar la función del modelo que crea las estructuras de datos
+    data_structs = model.new_data_structs()
+    control = {
+        'data_structs': data_structs
+    }
+    return control
 
 
 # Funciones para la carga de datos
 
-def load_data(control, filename):
+def load_data(control, filename, data_type):
     """
-    Carga los datos del reto
+    Carga los datos desde un archivo CSV en el modelo
     """
-    # TODO: Realizar la carga de datos
-    pass
+    data_structs = control['data_structs']
+    full_path = f"Data/football/{filename.replace('utf8', 'utf8-small')}"  # Ruta completa
+    
+    with open(full_path, "r", encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile)
+        for row in reader:
+            if data_type == "results":
+                model.add_match_data(data_structs, row)
+            elif data_type == "goalscorers":
+                model.add_goalscorer_data(data_structs, row)
+            elif data_type == "shootouts":
+                model.add_shootout_data(data_structs, row)
+    
+    print(f"Datos cargados desde {full_path}")
+
+
+
+# Función para obtener las estructuras de datos
+def get_data_structs(control):
+    """
+    Obtiene las estructuras de datos del modelo
+    """
+    return control["data_structs"]
+
 
 
 # Funciones de ordenamiento
-
-def sort(control):
+def sort_results(control):
     """
-    Ordena los datos del modelo
+    Retorna el resultado del requerimiento 1
     """
-    #TODO: Llamar la función del modelo para ordenar los datos
-    pass
+    matches = model.sort_results(control["data_structs"])
+    return matches
+def sort_goalscorers(control):
+    return model.sort_goalscorers(control["data_structs"])
 
+def sort_shootouts(control):
+    return model.sort_shootouts(control["data_structs"])
 
 # Funciones de consulta sobre el catálogo
 

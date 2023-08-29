@@ -65,17 +65,91 @@ def print_menu():
 
 def load_data(control):
     """
-    Carga los datos
+    Carga los datos de los archivos CSV
     """
-    #TODO: Realizar la carga de datos
-    date,home_team,away_team = controller.loadData(control)
-    return date,home_team,away_team
+
     
-def print_data(control, id):
+    # Cargar resultados de partidos
+    result_file = "results-utf8.csv"
+    controller.load_data(control, result_file, "results")
+    
+    # Cargar anotaciones de jugadores
+    goalscorers_file = "goalscorers-utf8.csv"
+    controller.load_data(control, goalscorers_file, "goalscorers")
+    
+    # Cargar definiciones de partidos desde el punto penal
+    shootouts_file = "shootouts-utf8.csv"
+    controller.load_data(control, shootouts_file, "shootouts")
+    
+    print("Carga de datos completa.")
+
+
+    
+
+def print_results(control):
     """
-        Función que imprime un dato dado su ID
+    Función que imprime la solución del Requerimiento 1 en consola
     """
-    #TODO: Realizar la función para imprimir un elemento
+    matches = controller.sort_results(control)
+    
+    headers = ["Match Date", "Home Team", "Away Team", "Home escore", "Away score", "Tournament", "Country", "City"]
+    table = []
+    
+    for match in lt.iterator(matches):
+        table.append([
+            match["date"],
+            match["home_team"],
+            match["away_team"],
+            match['home_score'],
+            match['away_score'],
+            match["tournament"],
+            match["country"],
+            match["city"]
+        ])
+    
+    print(tabulate(table, headers=headers, tablefmt="grid"))
+
+
+def print_goalscorers_data(control):
+    goalscorers = controller.sort_goalscorers(control)
+    
+    headers = ["Match Date", "Home Team", "Away Team", "Player", "Player's Team", "Minute", "Penalty", "Own Goal"]
+    table = []
+    
+    for goalscorer in lt.iterator(goalscorers):
+        table.append([
+            goalscorer["date"],
+            goalscorer["home_team"],
+            goalscorer["away_team"],
+            goalscorer["scorer"],
+            goalscorer["scorer_team"],
+            goalscorer["minute"],
+            goalscorer["penalty"],
+            goalscorer["own_goal"]
+        ])
+    
+    print("Total goalscorers loaded:", lt.size(goalscorers))
+    print(tabulate(table, headers=headers, tablefmt="grid"))
+
+def print_shootouts_data(control):
+    shootouts = controller.sort_shootouts(control)
+    
+    headers = ["Match Date", "Home Team", "Away Team", "Winner"]
+    table = []
+    
+    for shootout in lt.iterator(shootouts):
+        table.append([
+            shootout["date"],
+            shootout["home_team"],
+            shootout["away_team"],
+            shootout["winner"]
+        ])
+    
+    print("Total shootouts loaded:", lt.size(shootouts))
+    print(tabulate(table, headers=headers, tablefmt="grid"))
+
+
+
 
 def print_req_1(control):
     """
@@ -157,6 +231,9 @@ if __name__ == "__main__":
         if int(inputs) == 1:
             print("Cargando información de los archivos ....\n")
             data = load_data(control)
+            print_results(control)
+            print_goalscorers_data(control)
+            print_shootouts_data(control)
         elif int(inputs) == 2:
             print_req_1(control)
 
