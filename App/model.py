@@ -35,7 +35,7 @@ from DISClib.Algorithms.Sorting import selectionsort as se
 from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
 assert cf
-
+import datetime 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá
 dos listas, una para los videos, otra para las categorias de los mismos.
@@ -50,7 +50,16 @@ def new_data_structs():
     manera vacía para posteriormente almacenar la información.
     """
     #TODO: Inicializar las estructuras de datos
-    pass
+    data = {'goalscore': None,
+               'results': None,
+               'shootouts': None,
+            }
+
+    data['goalscore'] = lt.newList('ARRAY_LIST',  filename = "Data/football/goalscorers-utf8-small.csv")
+    data['results'] = lt.newList('ARRAY_LIST', filename = "Data/football/results-utf8-small.csv")
+    data['shootouts'] = lt.newList('ARRAY_LIST', filename = "Data/football/shootouts-utf8-small.csv")
+    
+    return data
 
 
 # Funciones para agregar informacion al modelo
@@ -167,23 +176,16 @@ def compare(data_1, data_2):
 # Funciones de ordenamiento
 
 
-def sort_criteria(data_1, data_2):
-    """sortCriteria criterio de ordenamiento para las funciones de ordenamiento
-
-    Args:
-        data1 (_type_): _description_
-        data2 (_type_): _description_
-
-    Returns:
-        _type_: _description_
-    """
-    #TODO: Crear función comparadora para ordenar
-    pass
+def compareratings(date1, date2):
+    date1 = datetime.datetime.strptime(date1['date'], '%Y-%m-%d')
+    date2 = datetime.datetime.strptime(date2['date'], '%Y-%m-%d')
+    return (float(date1['date']) > float(date2['date']))
 
 
-def sort(data_structs):
-    """
-    Función encargada de ordenar la lista con los datos
-    """
-    #TODO: Crear función de ordenamiento
-    pass
+# Funciones de ordenamiento
+
+def sort(data):
+    sa.sort(data['goalscore'], compareratings)
+    sa.sort(data['shootouts'], compareratings)
+    sa.sort(data['results'], compareratings)
+
