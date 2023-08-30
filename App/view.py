@@ -160,9 +160,8 @@ if __name__ == "__main__":
             print('Match result count: ' + str(lt.size(rs)))
             print('Goal scorers count: ' + str(lt.size(gs)))
             print('shootout-penalty definition count: ' + str(lt.size(so)))
-            print(tabulate(gs))
-            print(tabulate(rs))
-            print(tabulate(so))
+            
+       
         elif int(inputs) == 2:
             print_req_1(control)
 
