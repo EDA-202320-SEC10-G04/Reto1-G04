@@ -157,8 +157,8 @@ if __name__ == "__main__":
         if int(inputs) == 1:
             print("Cargando información de los archivos ....\n")
             gs, rs, so = load_data(control)
-            print('Match result count: ' + str(lt.size(gs)))
-            print('Goal scorers count: ' + str(lt.size(rs)))
+            print('Match result count: ' + str(lt.size(rs)))
+            print('Goal scorers count: ' + str(lt.size(gs)))
             print('shootout-penalty definition count: ' + str(lt.size(so)))
         elif int(inputs) == 2:
             print_req_1(control)
