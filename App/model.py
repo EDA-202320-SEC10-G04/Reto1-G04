@@ -188,3 +188,4 @@ def sort(data):
     sa.sort(data['goalscore'], compareratings)
     sa.sort(data['shootouts'], compareratings)
     sa.sort(data['results'], compareratings)
+

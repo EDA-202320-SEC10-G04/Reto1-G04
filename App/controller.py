@@ -58,7 +58,7 @@ def loadData(control):
     goalscore = data['goalscore']
     results = data['results']
     shootouts = data['shootouts']
-    
+    sort(data)
     return goalscore, results, shootouts
 
 
