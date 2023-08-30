@@ -177,8 +177,8 @@ def compare(data_1, data_2):
 
 
 def compareratings(date1, date2):
-    date1 = datetime.datetime.strptime(date1['date'], '%y-%m-%d')
-    date2 = datetime.datetime.strptime(date2['date'], '%y-%m-%d')
+    date1 = datetime.datetime.strptime(date1['date'], '%Y-%m-%d')
+    date2 = datetime.datetime.strptime(date2['date'], '%Y-%m-%d')
     return (float(date1['date']) > float(date2['date']))
 
 
