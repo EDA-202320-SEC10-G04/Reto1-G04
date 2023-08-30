@@ -161,6 +161,8 @@ if __name__ == "__main__":
             print('Goal scorers count: ' + str(lt.size(gs)))
             print('shootout-penalty definition count: ' + str(lt.size(so)))
             print(tabulate(gs["elements"], tablefmt="grid"))
+            print(tabulate(rs["elements"], tablefmt="grid"))
+            print(tabulate(so["elements"], tablefmt="grid"))
         elif int(inputs) == 2:
             print_req_1(control)
 
