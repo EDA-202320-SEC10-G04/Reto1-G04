@@ -35,7 +35,7 @@ from DISClib.Algorithms.Sorting import selectionsort as se
 from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
 assert cf
-
+import datetime 
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá
 dos listas, una para los videos, otra para las categorias de los mismos.
@@ -176,11 +176,15 @@ def compare(data_1, data_2):
 # Funciones de ordenamiento
 
 
-def compareratings(book1, book2):
-    return (float(book1['average_rating']) > float(book2['average_rating']))
+def compareratings(date1, date2):
+    date1 = datetime.datetime.strptime(date1['date'], '%y-%m-%d')
+    date2 = datetime.datetime.strptime(date2['date'], '%y-%m-%d')
+    return (float(date1['date']) > float(date2['date']))
 
 
 # Funciones de ordenamiento
 
-def sortBooks(catalog):
-    sa.sort(catalog['books'], compareratings)
+def sort(data):
+    sa.sort(data['goalscore'], compareratings)
+    sa.sort(data['shootouts'], compareratings)
+    sa.sort(data['results'], compareratings)
