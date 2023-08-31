@@ -192,13 +192,13 @@ def sort(data):
 def getFirstNum(number, tablelist):
     if number <= lt.size(tablelist):
         firsts = lt.newList('ARRAY_LIST')
-        for element in number:
+        for element in range(0, number):
             d = lt.getElement(tablelist, element)
             lt.addFirst(firsts, d)
         return firsts
     else:
         return tablelist
-def getLastnum(number, tablelist):
+def getLastNum(number, tablelist):
     if number <= lt.size(tablelist):
         last = lt.newList('ARRAY_LIST')
         for element in range(1,number+1):
@@ -207,3 +207,11 @@ def getLastnum(number, tablelist):
         return last
     else:
         return tablelist
+
+def listFusion(list1, list2):
+    listfusion = lt.newList('ARRAY_LIST')
+    for element in lt.iterator(list1):
+        lt.addLast(listfusion, element)
+    for element in lt.iterator(list2):
+        lt.addLast(listfusion, element)
+    return listfusion

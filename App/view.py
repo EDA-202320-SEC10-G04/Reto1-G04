@@ -29,6 +29,8 @@ from DISClib.ADT import queue as qu
 assert cf
 from tabulate import tabulate
 import traceback
+from prettytable import PrettyTable, ALL
+
 
 default_limit = 1000
 sys.setrecursionlimit(default_limit*100)
@@ -61,8 +63,23 @@ def print_menu():
     print("8- Ejecutar Requerimiento 7")
     print("9- Ejecutar Requerimiento 8")
     print("0- Salir")
-
-
+#pretty table
+def printSimpleTable(tableList, keys):
+    table = PrettyTable()
+    table.max_width = 20
+    table.hrules =ALL
+    table.field_names = keys
+    lines = []
+    for element in lt.iterator(tableList):
+        line = []
+        for key in keys:
+            stringE = str(element[key])
+            if len(stringE) > 20:
+                stringE = stringE[:20]
+            line.append(stringE)
+        lines.append(line)
+    table.add_rows(lines)
+    print(table)
 def load_data(control):
     """
     Carga los datos
@@ -196,19 +213,3 @@ if __name__ == "__main__":
             print("Opción errónea, vuelva a elegir.\n")
     sys.exit(0)
 
-def printSimpleTable(tableList, key):
-    table = PrettyTable()
-    table.max_width = 20
-    table.hrules =ALL
-    table.field_names= keys
-    lines = []
-    for element in lt.iterator(tableList):
-        line = []
-        for key in keys:
-            stringE = str(element[key])
-            if len(stringE) > 20:
-                stringE = stringE[:20]
-            line.append(stringE)
-        lines.append(line)
-    table.add_rows(lines)
-    print(table)

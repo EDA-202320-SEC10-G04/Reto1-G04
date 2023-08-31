@@ -169,7 +169,7 @@ def sixdata(tableList):
     else:
         firsts = getFirstNum(3, tableList)
         lasts = getLastNum(3, tableList)
-        return model.listsFusion(firsts, lasts)
+        return model.listFusion(firsts, lasts)
 def getFirstNum(number, tableList):
     return model.getFirstNum(number,tableList)
 
