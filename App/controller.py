@@ -58,43 +58,11 @@ def loadData(control):
     goalscore = data['goalscore']
     results = data['results']
     shootouts = data['shootouts']
-    sort(data)
+    #sort(data)
     return goalscore, results, shootouts
 
 
-def loadgoalscores(catalog):
-    """
-    Carga los libros del archivo.  Por cada libro se toman sus autores y por
-    cada uno de ellos, se crea en la lista de autores, a dicho autor y una
-    referencia al libro que se esta procesando.
-    """
-    goalsfile = cf.data_dir + 'Data/football/goalscorers-utf8-small.csv'
-    input_file = csv.DictReader(open(goalsfile, encoding='utf-8'))
-    for goal in input_file:
-        model.addBook(catalog, book)
-    return model.bookSize(catalog), model.authorSize(catalog)
 
-
-def loadTags(catalog):
-    """
-    Carga todos los tags del archivo y los agrega a la lista de tags
-    """
-    tagsfile = cf.data_dir + 'GoodReads/tags.csv'
-    input_file = csv.DictReader(open(tagsfile, encoding='utf-8'))
-    for tag in input_file:
-        model.addTag(catalog, tag)
-    return model.tagSize(catalog)
-
-
-def loadBooksTags(catalog):
-    """
-    Carga la información que asocia tags con libros.
-    """
-    booktagsfile = cf.data_dir + 'GoodReads/book_tags.csv'
-    input_file = csv.DictReader(open(booktagsfile, encoding='utf-8'))
-    for booktag in input_file:
-        model.addBookTag(catalog, booktag)
-    return model.bookTagSize(catalog)
 
 # Funciones de ordenamiento
 
@@ -194,3 +162,16 @@ def delta_time(start, end):
     """
     elapsed = float(end - start)
     return elapsed
+
+def sixdata(tableList):
+    if model.lt.size(tableList) <=6:
+        return tableList
+    else:
+        firsts = getFirstNum(3, tableList)
+        lasts = getLastNum(3, tableList)
+        return model.listFusion(firsts, lasts)
+def getFirstNum(number, tableList):
+    return model.getFirstNum(number,tableList)
+
+def getLastNum(number,tableList):
+    return model.getLastNum(number,tableList)

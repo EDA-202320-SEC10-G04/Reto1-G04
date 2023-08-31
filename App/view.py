@@ -29,9 +29,11 @@ from DISClib.ADT import queue as qu
 assert cf
 from tabulate import tabulate
 import traceback
+from prettytable import PrettyTable, ALL
+
 
 default_limit = 1000
-sys.setrecursionlimit(default_limit*10)
+sys.setrecursionlimit(default_limit*100)
 """
 La vista se encarga de la interacción con el usuario
 Presenta el menu de opciones y por cada seleccion
@@ -52,17 +54,32 @@ def new_controller():
 def print_menu():
     print("Bienvenido")
     print("1- Cargar información")
-    print("2- Ejecutar Requerimiento 1")
-    print("3- Ejecutar Requerimiento 2")
-    print("4- Ejecutar Requerimiento 3")
-    print("5- Ejecutar Requerimiento 4")
-    print("6- Ejecutar Requerimiento 5")
-    print("7- Ejecutar Requerimiento 6")
-    print("8- Ejecutar Requerimiento 7")
-    print("9- Ejecutar Requerimiento 8")
+    print("2- Listar los partidos de un equipo")
+    print("3- Listar los primeros goles anotados por un jugador")
+    print("4- Consultar los partidos que disputo un equipo en un periodo de tiempo")
+    print("5- Consultar los partidos en un torneo durante un periodo de tiempo")
+    print("6- Consultar anotaciones de un jugador en un periodo de tiempo")
+    print("7- Clasificar los mejores equipos de un torneo en un periodo")
+    print("8- Clasificar los mejores anotadores en partidos oficiales en un periodo")
+    print("9- Comparar el desempeño de dos selecciones en torneos oficiales")
     print("0- Salir")
-
-
+#pretty table
+def printSimpleTable(tableList, keys):
+    table = PrettyTable()
+    table.max_width = 20
+    table.hrules =ALL
+    table.field_names = keys
+    lines = []
+    for element in lt.iterator(tableList):
+        line = []
+        for key in keys:
+            stringE = str(element[key])
+            if len(stringE) > 20:
+                stringE = stringE[:20]
+            line.append(stringE)
+        lines.append(line)
+    table.add_rows(lines)
+    print(table)
 def load_data(control):
     """
     Carga los datos
@@ -160,9 +177,20 @@ if __name__ == "__main__":
             print('Match result count: ' + str(lt.size(rs)))
             print('Goal scorers count: ' + str(lt.size(gs)))
             print('shootout-penalty definition count: ' + str(lt.size(so)))
-            print(tabulate(gs["elements"], tablefmt="grid"))
-            print(tabulate(rs["elements"], tablefmt="grid"))
-            print(tabulate(so["elements"], tablefmt="grid"))
+            #--------------------MATCH RESULTS ----------------------
+            print("--------------------MATCH RESULTS --------------------")
+            sixResults =controller.sixdata(control['model']['results'])
+            printSimpleTable(sixResults, ['date','home_team','away_team','home_score','away_score','country','city','tournament'])
+           # -----------GOAL SCORES-----------------------------
+            print("-------------------GOAL SCORES-----------------------------")
+            sixgoals = controller.sixdata(control['model']['goalscore'])
+            printSimpleTable(sixgoals,['date','home_team','away_team','scorer','team','minute','penalty','own_goal'])
+            # ------------------- SHOOTOUS----------------------------------------------------------------
+            print("----------------------SHOOTOUS----------------------------------------------------------------")
+            sixshoots = controller.sixdata(control['model']['shootouts'])
+            printSimpleTable(sixshoots,['date','home_team','away_team','winner'])
+
+
         elif int(inputs) == 2:
             print_req_1(control)
 
@@ -193,3 +221,4 @@ if __name__ == "__main__":
         else:
             print("Opción errónea, vuelva a elegir.\n")
     sys.exit(0)
+

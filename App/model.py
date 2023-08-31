@@ -189,3 +189,29 @@ def sort(data):
     sa.sort(data['shootouts'], compareratings)
     sa.sort(data['results'], compareratings)
 
+def getFirstNum(number, tablelist):
+    if number <= lt.size(tablelist):
+        firsts = lt.newList('ARRAY_LIST')
+        for element in range(1, number+1):
+            d = lt.getElement(tablelist, element)
+            lt.addLast(firsts, d)
+        return firsts
+    else:
+        return tablelist
+def getLastNum(number, tablelist):
+    if number <= lt.size(tablelist):
+        last = lt.newList('ARRAY_LIST')
+        for element in range(0,number):
+            d = lt.getElement(tablelist, lt.size(tablelist)-element)
+            lt.addFirst(last, d)
+        return last
+    else:
+        return tablelist
+
+def listFusion(list1, list2):
+    listfusion = lt.newList('ARRAY_LIST')
+    for element in lt.iterator(list1):
+        lt.addLast(listfusion, element)
+    for element in lt.iterator(list2):
+        lt.addLast(listfusion, element)
+    return listfusion
