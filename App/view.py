@@ -177,11 +177,20 @@ if __name__ == "__main__":
             print('Match result count: ' + str(lt.size(rs)))
             print('Goal scorers count: ' + str(lt.size(gs)))
             print('shootout-penalty definition count: ' + str(lt.size(so)))
-            #print(tabulate(gs["elements"], tablefmt="grid"))
+            #--------------------MATCH RESULTS ----------------------
+            print("--------------------MATCH RESULTS --------------------")
+            sixResults =controller.sixdata(control['model']['results'])
+            printSimpleTable(sixResults, ['date','home_team','away_team','home_score','away_score','country','city','tournament'])
+           # -----------GOAL SCORES-----------------------------
+            print("-------------------GOAL SCORES-----------------------------")
             sixgoals = controller.sixdata(control['model']['goalscore'])
             printSimpleTable(sixgoals,['date','home_team','away_team','scorer','team','minute','penalty','own_goal'])
-            """print(tabulate(rs["elements"], tablefmt="grid"))
-            print(tabulate(so["elements"], tablefmt="grid"))"""
+            # ------------------- SHOOTOUS----------------------------------------------------------------
+            print("----------------------SHOOTOUS----------------------------------------------------------------")
+            sixshoots = controller.sixdata(control['model']['shootouts'])
+            printSimpleTable(sixshoots,['date','home_team','away_team','winner'])
+
+
         elif int(inputs) == 2:
             print_req_1(control)
 
