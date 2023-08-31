@@ -189,3 +189,21 @@ def sort(data):
     sa.sort(data['shootouts'], compareratings)
     sa.sort(data['results'], compareratings)
 
+def getFirstNum(number, tablelist):
+    if number <= lt.size(tablelist):
+        firsts = lt.newList('ARRAY_LIST')
+        for element in number:
+            d = lt.getElement(tablelist, element)
+            lt.addFirst(firsts, d)
+        return firsts
+    else:
+        return tablelist
+def getLastnum(number, tablelist):
+    if number <= lt.size(tablelist):
+        last = lt.newList('ARRAY_LIST')
+        for element in range(1,number+1):
+            d = lt.getElement(tablelist, lt.size(tablelist)-element)
+            lt.addLast(last, d)
+        return last
+    else:
+        return tablelist

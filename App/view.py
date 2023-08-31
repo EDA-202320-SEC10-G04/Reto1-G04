@@ -31,7 +31,7 @@ from tabulate import tabulate
 import traceback
 
 default_limit = 1000
-sys.setrecursionlimit(default_limit*10)
+sys.setrecursionlimit(default_limit*100)
 """
 La vista se encarga de la interacción con el usuario
 Presenta el menu de opciones y por cada seleccion
@@ -160,9 +160,11 @@ if __name__ == "__main__":
             print('Match result count: ' + str(lt.size(rs)))
             print('Goal scorers count: ' + str(lt.size(gs)))
             print('shootout-penalty definition count: ' + str(lt.size(so)))
-            print(tabulate(gs["elements"], tablefmt="grid"))
-            print(tabulate(rs["elements"], tablefmt="grid"))
-            print(tabulate(so["elements"], tablefmt="grid"))
+            #print(tabulate(gs["elements"], tablefmt="grid"))
+            sixgoals = controller.sixdata(control['model']['goalscore'])
+            printSimpleTable(sixgoals,['date','home_team','away_team','scorer','team','minute','penalty','own_goal'])
+            """print(tabulate(rs["elements"], tablefmt="grid"))
+            print(tabulate(so["elements"], tablefmt="grid"))"""
         elif int(inputs) == 2:
             print_req_1(control)
 
@@ -193,3 +195,20 @@ if __name__ == "__main__":
         else:
             print("Opción errónea, vuelva a elegir.\n")
     sys.exit(0)
+
+def printSimpleTable(tableList, key):
+    table = PrettyTable()
+    table.max_width = 20
+    table.hrules =ALL
+    table.field_names= keys
+    lines = []
+    for element in lt.iterator(tableList):
+        line = []
+        for key in keys:
+            stringE = str(element[key])
+            if len(stringE) > 20:
+                stringE = stringE[:20]
+            line.append(stringE)
+        lines.append(line)
+    table.add_rows(lines)
+    print(table)
