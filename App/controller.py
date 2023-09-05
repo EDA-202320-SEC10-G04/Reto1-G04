@@ -175,3 +175,9 @@ def getFirstNum(number, tableList):
 
 def getLastNum(number,tableList):
     return model.getLastNum(number,tableList)
+
+def FindTeam(tableList, name):
+    team = model.getnameTeam(tableList,name)
+    
+    return team
+    

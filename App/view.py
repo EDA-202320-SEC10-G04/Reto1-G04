@@ -195,6 +195,10 @@ if __name__ == "__main__":
             print_req_1(control)
 
         elif int(inputs) == 3:
+            team = input('\nNombre del equipo que desea consultar: ')
+            P_inicial = input('\n La fecha inicial del periodo a consultar (con formato "%Y-%m-%d"): ')
+            P_final = input('\n La fecha final del periodo a consultar (con formato "%Y-%m-%d"): ')
+            NumeroEquipos = controller.FindTeam(control['results'],team)
             print_req_2(control)
 
         elif int(inputs) == 4:

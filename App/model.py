@@ -215,3 +215,12 @@ def listFusion(list1, list2):
     for element in lt.iterator(list2):
         lt.addLast(listfusion, element)
     return listfusion
+
+def getnameTeam(tableList,name):
+    nameTeam = lt.newList('ARRAY_LIST')
+    x =lt.compareElements(tableList, name, element)
+    for element in lt.iterator(tableList['home_team']):
+        if name == element:
+            nameTeam.addLast(element)
+        
+        
