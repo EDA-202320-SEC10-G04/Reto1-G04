@@ -47,31 +47,55 @@ def new_controller():
 
 # Funciones para la carga de datos
 
+
+def loadGoalscorers(catalog):
+    """
+    Carga los datos del archivo goalscorers.csv.
+    """
+    goalscorersfile = cf.data_dir + 'football/goalscorers-utf8-small.csv'
+    input_file = csv.DictReader(open(goalscorersfile, encoding='utf-8'))
+    for goal in input_file:
+        model.add_goalscorers(catalog['model'], goal)
+
+def loadResults(catalog):
+    """
+    Carga los datos del archivo results-utf8-small.csv.
+    """
+    resultsfile = cf.data_dir + 'football/results-utf8-small.csv'
+    input_file = csv.DictReader(open(resultsfile, encoding='utf-8'))
+    for result in input_file:
+        model.add_results(catalog['model'], result)
+
+def loadShootouts(catalog):
+    """
+    Carga los datos del archivo shootouts-utf8-small.csv.
+    """
+    shootoutsfile = cf.data_dir + 'football/shootouts-utf8-small.csv'
+    input_file = csv.DictReader(open(shootoutsfile, encoding='utf-8'))
+    for shootout in input_file:
+        model.add_shootouts(catalog['model'], shootout)
+
+
+# ...
+
 def loadData(control):
     """
     Carga los datos de los archivos y cargar los datos en la
     estructura de datos
     """
-    """goalscore, results, shootouts = model.new_data_structs(control)
-    """
-    data = control['model']
-    goalscore = data['goalscore']
-    results = data['results']
-    shootouts = data['shootouts']
-    #sort(data)
-    return goalscore, results, shootouts
+    loadGoalscorers(control)
+    loadResults(control)
+    loadShootouts(control)
+
+    # Luego de cargar los datos, ordena las listas usando la función de ordenamiento del modelo
+    model.sort(control['model'])
+
+# ...
 
 
 
 
-# Funciones de ordenamiento
 
-def sort(control):
-    """
-    Ordena los datos del modelo
-    """
-    #TODO: Llamar la función del modelo para ordenar los datos
-    pass
 
 
 # Funciones de consulta sobre el catálogo
@@ -161,7 +185,33 @@ def delta_time(start, end):
     devuelve la diferencia entre tiempos de procesamiento muestreados
     """
     elapsed = float(end - start)
-    return elapsed
+    return 
+def load_data(control):
+    """
+    Carga los datos desde los archivos CSV.
+    """
+    print("Cargando información de los archivos ....\n")
+    
+    goal_score_count = loadGoalscorers(control)
+    result_count = loadResults(control)
+    shootout_count = loadShootouts(control)
+
+    # Luego de cargar los datos, ordena las listas usando la función de ordenamiento del modelo
+    model.sort(control['model'])
+
+    # Obtener las primeras y últimas filas de los datos ordenados
+    first_results = model.getFirstNum(3, control['model']['results'])
+    last_results = model.getLastNum(3, control['model']['results'])
+    
+    first_goalscore = model.getFirstNum(3, control['model']['goalscore'])
+    last_goalscore = model.getLastNum(3, control['model']['goalscore'])
+    
+    first_shootouts = model.getFirstNum(3, control['model']['shootouts'])
+    last_shootouts = model.getLastNum(3, control['model']['shootouts'])
+
+    return goal_score_count, result_count, shootout_count, first_results, last_results, first_goalscore, last_goalscore, first_shootouts, last_shootouts
+
+
 
 def sixdata(tableList):
     if model.lt.size(tableList) <=6:

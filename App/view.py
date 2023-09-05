@@ -82,11 +82,14 @@ def printSimpleTable(tableList, keys):
     print(table)
 def load_data(control):
     """
-    Carga los datos
+    Carga los datos desde los archivos CSV.
     """
-    #TODO: Realizar la carga de datos
-    goalscore, results, shootouts = controller.loadData(control)
-    return goalscore, results, shootouts 
+    print("Cargando información de los archivos ....\n")
+    goal_score_count = controller.loadGoalscorers(control)
+    result_count = controller.loadResults(control)
+    shootout_count = controller.loadShootouts(control)
+    controller.loadData(control)
+    return goal_score_count, result_count, shootout_count
     
 def print_data(control, id):
     """
@@ -172,11 +175,11 @@ if __name__ == "__main__":
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
-            print("Cargando información de los archivos ....\n")
-            gs, rs, so = load_data(control)
-            print('Match result count: ' + str(lt.size(rs)))
-            print('Goal scorers count: ' + str(lt.size(gs)))
-            print('shootout-penalty definition count: ' + str(lt.size(so)))
+    
+            load_data(control)
+            print('Match result count: ' + str(lt.size(control['model']['results'])))
+            print('Goal scorers count: ' + str(lt.size(control['model']['goalscore'])))
+            print('shootout-penalty definition count: ' + str(lt.size(control['model']['shootouts'])))
             #--------------------MATCH RESULTS ----------------------
             print("--------------------MATCH RESULTS --------------------")
             sixResults =controller.sixdata(control['model']['results'])
