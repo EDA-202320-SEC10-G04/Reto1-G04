@@ -42,40 +42,34 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 """
 
 # Construccion de modelos
-
 def new_data_structs():
-    """
-    Inicializa las estructuras de datos del modelo. Las crea de
-    manera vacía para posteriormente almacenar la información.
-    """
     data = {
         'goalscore': None,
         'results': None,
         'shootouts': None,
     }
-
-    data['goalscore'] = lt.newList('ARRAY_LIST', cmpfunction=compare_goalscore)
-    data['results'] = lt.newList('ARRAY_LIST', cmpfunction=compare_results)
-    data['shootouts'] = lt.newList('ARRAY_LIST', cmpfunction=compare_shootouts)
+    data['goalscore'] = lt.newList('ARRAY_LIST')
+    data['results'] = lt.newList('ARRAY_LIST')
+    data['shootouts'] = lt.newList('ARRAY_LIST')
+    data['unique_goalscorers'] = set()  # Conjunto para evitar duplicados en goleadores
+    data['unique_results'] = set()      # Conjunto para evitar duplicados en resultados
+    data['unique_shootouts'] = set()    # Conjunto para evitar duplicados en shootouts
     return data
 
 def add_goalscorers(data_structs, data):
-    """
-    Función para agregar nuevos elementos a la lista de goleadores
-    """
-    lt.addLast(data_structs['goalscore'], data)
+    if data['scorer'] not in data_structs['unique_goalscorers']:
+        lt.addLast(data_structs['goalscore'], data)
+        data_structs['unique_goalscorers'].add(data['scorer'])
 
 def add_results(data_structs, data):
-    """
-    Función para agregar nuevos elementos a la lista de resultados de partidos
-    """
-    lt.addLast(data_structs['results'], data)
+    if (data['home_team'], data['away_team']) not in data_structs['unique_results']:
+        lt.addLast(data_structs['results'], data)
+        data_structs['unique_results'].add((data['home_team'], data['away_team']))
 
 def add_shootouts(data_structs, data):
-    """
-    Función para agregar nuevos elementos a la lista de definiciones de partidos desde el punto penal
-    """
-    lt.addLast(data_structs['shootouts'], data)
+    if (data['home_team'], data['away_team']) not in data_structs['unique_shootouts']:
+        lt.addLast(data_structs['shootouts'], data)
+        data_structs['unique_shootouts'].add((data['home_team'], data['away_team']))
 
 # ...
 
@@ -84,23 +78,36 @@ def compare_goalscore(data1, data2):
     # Ordenar primero por fecha
     date1 = datetime.datetime.strptime(data1['date'], '%Y-%m-%d')
     date2 = datetime.datetime.strptime(data2['date'], '%Y-%m-%d')
-    
+
     if date1 < date2:
-        return -1
+        return False
     elif date1 > date2:
-        return 1
+        return True
     else:
         # Si las fechas son iguales, ordenar por minuto en que se anotó el gol
-        if data1['minute'] < data2['minute']:
-            return -1
-        elif data1['minute'] > data2['minute']:
-            return 1
-        else:
-            
-            # Si el minuto es igual, comparar los nombres de los jugadores sin importar mayúsculas y minúsculas
-            player1 = data1['scorer'].lower()
-            player2 = data2['scorer'].lower()
-            return -1 if player1 < player2 else 1 if player1 > player2 else 0
+
+        minute1 = data1['minute']
+        minute2 = data2['minute']
+        
+        # Comprobar si los minutos no son cadenas vacías antes de convertir a flotante
+        if minute1 and minute2:
+            if float(minute1) < float(minute2):
+                return False
+            elif float(minute1) > float(minute2):
+                return True
+            else:
+                
+                # Si el minuto es igual, comparar los nombres de los jugadores sin importar mayúsculas y minúsculas
+                player1 = data1['scorer'].lower()
+                player2 = data2['scorer'].lower()
+                if player1 > player2:
+                    return True
+                elif player1 < player2 :
+                    return False
+                else:
+                    return False
+ 
+
 
 def compare_results(data1, data2):
     # Ordenar primero por fecha, luego por puntaje local y puntaje visitante
@@ -108,21 +115,21 @@ def compare_results(data1, data2):
     date2 = datetime.datetime.strptime(data2['date'], '%Y-%m-%d')
     
     if date1 < date2:
-        return -1
+        return False
     elif date1 > date2:
-        return 1
+        return True
     else:
-        if data1['home_score'] < data2['home_score']:
-            return -1
-        elif data1['home_score'] > data2['home_score']:
-            return 1
+        if float(data1['home_score']) < float((data2['home_score'])):
+            return False
+        elif float(data1['home_score']) > float(data2['home_score']):
+            return True
         else:
-            if data1['away_score'] < data2['away_score']:
-                return -1
-            elif data1['away_score'] > data2['away_score']:
-                return 1
+            if float(data1['away_score']) < float(data2['away_score']):
+                return False
+            elif float(data1['away_score']) > float(data2['away_score']):
+                return True
             else:
-                return 0
+                return False
 
 def compare_shootouts(data1, data2):
     # Ordenar primero por fecha
@@ -130,21 +137,21 @@ def compare_shootouts(data1, data2):
     date2 = datetime.datetime.strptime(data2['date'], '%Y-%m-%d')
     
     if date1 < date2:
-        return -1
+        return False
     elif date1 > date2:
-        return 1
+        return True
     else:
         # Si las fechas son iguales, comparar los nombres de los equipos sin importar mayúsculas y minúsculas
         team1 = data1['home_team'].lower()
         team2 = data2['home_team'].lower()
         if team1 < team2:
-            return -1
+            return False
         elif team1 > team2:
-            return 1
+            return True
         else:
-            team1 = data1['away_team'].lower()
-            team2 = data2['away_team'].lower()
-            return -1 if team1 < team2 else 1 if team1 > team2 else 0
+            ateam1 = data1['away_team'].lower()
+            ateam2 = data2['away_team'].lower()
+            return False if ateam1 < ateam2 else True if ateam1 > ateam2 else False
 # ...
 def req_1(data_structs):
     """
@@ -222,9 +229,9 @@ def compare(data_1, data_2):
 # Funciones de ordenamiento
 def sort(data):
     # Ordenar las listas usando los criterios de comparación definidos
-    quk.sort(data['goalscore'], compare_goalscore)
-    quk.sort(data['results'], compare_results)
-    quk.sort(data['shootouts'], compare_shootouts)
+    sa.sort(data['goalscore'], compare_goalscore)
+    sa.sort(data['results'], compare_results)
+    sa.sort(data['shootouts'], compare_shootouts)
 
 # Funciones de ordenamiento
 

@@ -196,6 +196,8 @@ if __name__ == "__main__":
 
         elif int(inputs) == 2:
             print_req_1(control)
+            num_p = input("Number of matches")
+            nombre_equi = input("Ingrese el nombre del equipo")
 
         elif int(inputs) == 3:
             print_req_2(control)
