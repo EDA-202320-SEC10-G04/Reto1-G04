@@ -70,6 +70,25 @@ def add_shootouts(data_structs, data):
     if (data['home_team'], data['away_team']) not in data_structs['unique_shootouts']:
         lt.addLast(data_structs['shootouts'], data)
         data_structs['unique_shootouts'].add((data['home_team'], data['away_team']))
+        
+def add_goalscorers1(data_structs, data):
+    """
+    Función para agregar nuevos elementos a la lista de goleadores
+    """
+    lt.addLast(data_structs['goalscore'], data)
+
+def add_results1(data_structs, data):
+    """
+    Función para agregar nuevos elementos a la lista de resultados de partidos
+    """
+    lt.addLast(data_structs['results'], data)
+
+def add_shootouts1(data_structs, data):
+    """
+    Función para agregar nuevos elementos a la lista de definiciones de partidos desde el punto penal
+    """
+    lt.addLast(data_structs['shootouts'], data)
+
 
 # ...
 
@@ -180,6 +199,7 @@ def get_first_n_goals_by_player(data_structs, player_name, n):
     total_goals = 0
 
     # Recorremos la lista de goles y seleccionamos los que coincidan con el jugador
+
     for goal in lt.iterator(data_structs['goalscore']):
         if goal['scorer'].lower() == player_name.lower():
             lt.addLast(player_goals, goal)
@@ -189,8 +209,12 @@ def get_first_n_goals_by_player(data_structs, player_name, n):
 
     return total_goals, player_goals
 
+
+
+
+
     
-    return lt.subList(player_goals, 1, n)
+
 def get_total_goals_by_player(data_structs, player_name):
     goals = data_structs['goalscore']
     player_goals = lt.newList('ARRAY_LIST')

@@ -80,15 +80,23 @@ def printSimpleTable(tableList, keys):
         lines.append(line)
     table.add_rows(lines)
     print(table)
-def load_data(control):
+def load_data_s_r(control):
     """
     Carga los datos desde los archivos CSV.
     """
-    print("Cargando información de los archivos ....\n")
+
     goal_score_count = controller.loadGoalscorers(control)
     result_count = controller.loadResults(control)
     shootout_count = controller.loadShootouts(control)
     controller.loadData(control)
+    return goal_score_count, result_count, shootout_count
+
+def load_data_c_r(control):
+    print("Cargando información de los archivos ....\n")
+    goal_score_count = controller.loadGoalscorers1(control)
+    result_count = controller.loadResults1(control)
+    shootout_count = controller.loadShootouts1(control)
+
     return goal_score_count, result_count, shootout_count
     
 def print_data(control, id):
@@ -110,19 +118,12 @@ def print_first_n_goals_by_player(total_goals, player_goals):
     
     if total_goals > 0:
         keys = ['date', 'home_team', 'away_team', 'scorer', 'minute', 'penalty', 'own_goal']
-        player_goals_table = PrettyTable()
-        player_goals_table.field_names = keys
-        
-        for goal in player_goals:
-            row = [goal.get(key, "Desconocido") for key in keys]
-            player_goals_table.add_row(row)
-        
+
+        printSimpleTable(player_goals, keys)
+
         if total_goals > 6:
-            print(player_goals_table.get_string(start=0, end=3))
-            print("...")
-            print(player_goals_table.get_string(start=-3, end=None))
-        else:
-            print(player_goals_table)
+            player_goals = controller.sixdata(player_goals)
+            printSimpleTable(player_goals, keys)
     else:
         print("No se encontraron goles para el jugador especificado.")
 
@@ -191,7 +192,7 @@ if __name__ == "__main__":
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
     
-            load_data(control)
+            load_data_c_r(control)
             print('Match result count: ' + str(lt.size(control['model']['results'])))
             print('Goal scorers count: ' + str(lt.size(control['model']['goalscore'])))
             print('shootout-penalty definition count: ' + str(lt.size(control['model']['shootouts'])))
