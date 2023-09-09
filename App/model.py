@@ -51,9 +51,9 @@ def new_data_structs():
     data['goalscore'] = lt.newList('ARRAY_LIST')
     data['results'] = lt.newList('ARRAY_LIST')
     data['shootouts'] = lt.newList('ARRAY_LIST')
-    data['unique_goalscorers'] = set()  # Conjunto para evitar duplicados en goleadores
-    data['unique_results'] = set()      # Conjunto para evitar duplicados en resultados
-    data['unique_shootouts'] = set()    # Conjunto para evitar duplicados en shootouts
+    data['unique_goalscorers'] = set()  
+    data['unique_results'] = set()      
+    data['unique_shootouts'] = set()    
     return data
 
 def add_goalscorers(data_structs, data):
@@ -152,6 +152,20 @@ def compare_shootouts(data1, data2):
             ateam1 = data1['away_team'].lower()
             ateam2 = data2['away_team'].lower()
             return False if ateam1 < ateam2 else True if ateam1 > ateam2 else False
+        
+def compare_goals(data1, data2):
+    date1 = data1['date']
+    date2 = data2['date']
+    minute1 = data1['minute']
+    minute2 = data2['minute']
+    
+    if date1 == date2:
+        if not minute1:
+            return False
+        if not minute2:
+            return True
+        return minute1 < minute2
+    return date1 < date2
 # ...
 def req_1(data_structs):
     """
@@ -160,14 +174,32 @@ def req_1(data_structs):
     # TODO: Realizar el requerimiento 1
     pass
 
+#req 2
+def get_first_n_goals_by_player(data_structs, player_name, n):
+    player_goals = lt.newList('ARRAY_LIST')
+    total_goals = 0
 
-def req_2(data_structs):
-    """
-    Función que soluciona el requerimiento 2
-    """
-    # TODO: Realizar el requerimiento 2
-    pass
+    # Recorremos la lista de goles y seleccionamos los que coincidan con el jugador
+    for goal in lt.iterator(data_structs['goalscore']):
+        if goal['scorer'].lower() == player_name.lower():
+            lt.addLast(player_goals, goal)
+            total_goals += 1
+            if total_goals == n:
+                break
 
+    return total_goals, player_goals
+
+    
+    return lt.subList(player_goals, 1, n)
+def get_total_goals_by_player(data_structs, player_name):
+    goals = data_structs['goalscore']
+    player_goals = lt.newList('ARRAY_LIST')
+    
+    for goal in lt.iterator(goals):
+        if goal['scorer'].lower() == player_name.lower():
+            lt.addLast(player_goals, goal)
+    
+    return lt.size(player_goals)
 
 def req_3(data_structs):
     """
@@ -232,6 +264,7 @@ def sort(data):
     sa.sort(data['goalscore'], compare_goalscore)
     sa.sort(data['results'], compare_results)
     sa.sort(data['shootouts'], compare_shootouts)
+    
 
 # Funciones de ordenamiento
 

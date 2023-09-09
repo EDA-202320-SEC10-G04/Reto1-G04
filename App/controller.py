@@ -115,13 +115,14 @@ def req_1(control):
     # TODO: Modificar el requerimiento 1
     pass
 
+#req 2
+def get_first_n_goals_by_player(control, player_name, n):
+    data_structs = control['model']
+    total_goals, player_goals = model.get_first_n_goals_by_player(data_structs, player_name, n)
+    return total_goals, player_goals
 
-def req_2(control):
-    """
-    Retorna el resultado del requerimiento 2
-    """
-    # TODO: Modificar el requerimiento 2
-    pass
+
+
 
 
 def req_3(control):

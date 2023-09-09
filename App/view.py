@@ -104,13 +104,28 @@ def print_req_1(control):
     # TODO: Imprimir el resultado del requerimiento 1
     pass
 
+def print_first_n_goals_by_player(total_goals, player_goals):
+    print(f"Total de goles anotados por el jugador: {total_goals}\n")
+    print("Detalles de los goles:")
+    
+    if total_goals > 0:
+        keys = ['date', 'home_team', 'away_team', 'scorer', 'minute', 'penalty', 'own_goal']
+        player_goals_table = PrettyTable()
+        player_goals_table.field_names = keys
+        
+        for goal in player_goals:
+            row = [goal.get(key, "Desconocido") for key in keys]
+            player_goals_table.add_row(row)
+        
+        if total_goals > 6:
+            print(player_goals_table.get_string(start=0, end=3))
+            print("...")
+            print(player_goals_table.get_string(start=-3, end=None))
+        else:
+            print(player_goals_table)
+    else:
+        print("No se encontraron goles para el jugador especificado.")
 
-def print_req_2(control):
-    """
-        Función que imprime la solución del Requerimiento 2 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 2
-    pass
 
 
 def print_req_3(control):
@@ -196,11 +211,12 @@ if __name__ == "__main__":
 
         elif int(inputs) == 2:
             print_req_1(control)
-            num_p = input("Number of matches")
-            nombre_equi = input("Ingrese el nombre del equipo")
 
         elif int(inputs) == 3:
-            print_req_2(control)
+            player_name = input("Ingrese el nombre del jugador: ")
+            n = int(input("Ingrese el número de goles a mostrar: "))
+            total_goals, player_goals = controller.get_first_n_goals_by_player(control, player_name, n)
+            print_first_n_goals_by_player(total_goals, player_goals)
 
         elif int(inputs) == 4:
             print_req_3(control)
