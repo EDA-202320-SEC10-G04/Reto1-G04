@@ -85,19 +85,13 @@ def load_data_s_r(control):
     Carga los datos desde los archivos CSV.
     """
 
-    goal_score_count = controller.loadGoalscorers(control)
-    result_count = controller.loadResults(control)
-    shootout_count = controller.loadShootouts(control)
-    controller.loadData(control)
-    return goal_score_count, result_count, shootout_count
-
-def load_data_c_r(control):
-    print("Cargando información de los archivos ....\n")
     goal_score_count = controller.loadGoalscorers1(control)
     result_count = controller.loadResults1(control)
     shootout_count = controller.loadShootouts1(control)
-
+    controller.loadData(control)
     return goal_score_count, result_count, shootout_count
+
+
     
 def print_data(control, id):
     """
@@ -192,7 +186,7 @@ if __name__ == "__main__":
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
     
-            load_data_c_r(control)
+            load_data_s_r(control)
             print('Match result count: ' + str(lt.size(control['model']['results'])))
             print('Goal scorers count: ' + str(lt.size(control['model']['goalscore'])))
             print('shootout-penalty definition count: ' + str(lt.size(control['model']['shootouts'])))

@@ -56,20 +56,7 @@ def new_data_structs():
     data['unique_shootouts'] = set()    
     return data
 
-def add_goalscorers(data_structs, data):
-    if data['scorer'] not in data_structs['unique_goalscorers']:
-        lt.addLast(data_structs['goalscore'], data)
-        data_structs['unique_goalscorers'].add(data['scorer'])
-
-def add_results(data_structs, data):
-    if (data['home_team'], data['away_team']) not in data_structs['unique_results']:
-        lt.addLast(data_structs['results'], data)
-        data_structs['unique_results'].add((data['home_team'], data['away_team']))
-
-def add_shootouts(data_structs, data):
-    if (data['home_team'], data['away_team']) not in data_structs['unique_shootouts']:
-        lt.addLast(data_structs['shootouts'], data)
-        data_structs['unique_shootouts'].add((data['home_team'], data['away_team']))
+#Agregar elementos
         
 def add_goalscorers1(data_structs, data):
     """
@@ -172,20 +159,7 @@ def compare_shootouts(data1, data2):
             ateam2 = data2['away_team'].lower()
             return False if ateam1 < ateam2 else True if ateam1 > ateam2 else False
         
-def compare_goals(data1, data2):
-    date1 = data1['date']
-    date2 = data2['date']
-    minute1 = data1['minute']
-    minute2 = data2['minute']
-    
-    if date1 == date2:
-        if not minute1:
-            return False
-        if not minute2:
-            return True
-        return minute1 < minute2
-    return date1 < date2
-# ...
+
 def req_1(data_structs):
     """
     Función que soluciona el requerimiento 1

@@ -48,32 +48,7 @@ def new_controller():
 # Funciones para la carga de datos
 
 
-def loadGoalscorers(catalog):
-    """
-    Carga los datos del archivo goalscorers.csv.
-    """
-    goalscorersfile = cf.data_dir + 'football/goalscorers-utf8-small.csv'
-    input_file = csv.DictReader(open(goalscorersfile, encoding='utf-8'))
-    for goal in input_file:
-        model.add_goalscorers(catalog['model'], goal)
 
-def loadResults(catalog):
-    """
-    Carga los datos del archivo results-utf8-small.csv.
-    """
-    resultsfile = cf.data_dir + 'football/results-utf8-small.csv'
-    input_file = csv.DictReader(open(resultsfile, encoding='utf-8'))
-    for result in input_file:
-        model.add_results(catalog['model'], result)
-
-def loadShootouts(catalog):
-    """
-    Carga los datos del archivo shootouts-utf8-small.csv.
-    """
-    shootoutsfile = cf.data_dir + 'football/shootouts-utf8-small.csv'
-    input_file = csv.DictReader(open(shootoutsfile, encoding='utf-8'))
-    for shootout in input_file:
-        model.add_shootouts(catalog['model'], shootout)
 #Datos con repeticiones
 
 def loadGoalscorers1(catalog):
@@ -109,24 +84,8 @@ def loadData(control):
     Carga los datos de los archivos y cargar los datos en la
     estructura de datos
     """
-    loadGoalscorers(control)
-    loadResults(control)
-    loadShootouts(control)
-
-    # Luego de cargar los datos, ordena las listas usando la función de ordenamiento del modelo
     model.sort(control['model'])
 
-def loadData1(control):
-    """
-    Carga los datos de los archivos y cargar los datos en la
-    estructura de datos
-    """
-    loadGoalscorers1(control)
-    loadResults1(control)
-    loadShootouts1(control)
-
-    # Luego de cargar los datos, ordena las listas usando la función de ordenamiento del modelo
-    model.sort(control['model'])
 
 
 # Funciones de consulta sobre el catálogo
