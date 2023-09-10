@@ -80,13 +80,18 @@ def printSimpleTable(tableList, keys):
         lines.append(line)
     table.add_rows(lines)
     print(table)
-def load_data(control):
+def load_data_s_r(control):
     """
-    Carga los datos
+    Carga los datos desde los archivos CSV.
     """
-    #TODO: Realizar la carga de datos
-    goalscore, results, shootouts = controller.loadData(control)
-    return goalscore, results, shootouts 
+
+    goal_score_count = controller.loadGoalscorers1(control)
+    result_count = controller.loadResults1(control)
+    shootout_count = controller.loadShootouts1(control)
+    controller.loadData(control)
+    return goal_score_count, result_count, shootout_count
+
+
     
 def print_data(control, id):
     """
@@ -101,13 +106,21 @@ def print_req_1(control):
     # TODO: Imprimir el resultado del requerimiento 1
     pass
 
+def print_first_n_goals_by_player(total_goals, player_goals):
+    print(f"Total de goles anotados por el jugador: {total_goals}\n")
+    print("Detalles de los goles:")
+    
+    if total_goals > 0:
+        keys = ['date', 'home_team', 'away_team', 'scorer', 'minute', 'penalty', 'own_goal']
 
-def print_req_2(control):
-    """
-        Función que imprime la solución del Requerimiento 2 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 2
-    pass
+        printSimpleTable(player_goals, keys)
+
+        if total_goals > 6:
+            player_goals = controller.sixdata(player_goals)
+            printSimpleTable(player_goals, keys)
+    else:
+        print("No se encontraron goles para el jugador especificado.")
+
 
 
 def print_req_3(control):
@@ -172,11 +185,11 @@ if __name__ == "__main__":
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
-            print("Cargando información de los archivos ....\n")
-            gs, rs, so = load_data(control)
-            print('Match result count: ' + str(lt.size(rs)))
-            print('Goal scorers count: ' + str(lt.size(gs)))
-            print('shootout-penalty definition count: ' + str(lt.size(so)))
+    
+            load_data_s_r(control)
+            print('Match result count: ' + str(lt.size(control['model']['results'])))
+            print('Goal scorers count: ' + str(lt.size(control['model']['goalscore'])))
+            print('shootout-penalty definition count: ' + str(lt.size(control['model']['shootouts'])))
             #--------------------MATCH RESULTS ----------------------
             print("--------------------MATCH RESULTS --------------------")
             sixResults =controller.sixdata(control['model']['results'])
@@ -195,11 +208,10 @@ if __name__ == "__main__":
             print_req_1(control)
 
         elif int(inputs) == 3:
-            team = input('\nNombre del equipo que desea consultar: ')
-            P_inicial = input('\n La fecha inicial del periodo a consultar (con formato "%Y-%m-%d"): ')
-            P_final = input('\n La fecha final del periodo a consultar (con formato "%Y-%m-%d"): ')
-            NumeroEquipos = controller.FindTeam(control['results'],team)
-            print_req_2(control)
+            player_name = input("Ingrese el nombre del jugador: ")
+            n = int(input("Ingrese el número de goles a mostrar: "))
+            total_goals, player_goals = controller.get_first_n_goals_by_player(control, player_name, n)
+            print_first_n_goals_by_player(total_goals, player_goals)
 
         elif int(inputs) == 4:
             print_req_3(control)

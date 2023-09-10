@@ -47,31 +47,45 @@ def new_controller():
 
 # Funciones para la carga de datos
 
+
+
+#Datos con repeticiones
+
+def loadGoalscorers1(catalog):
+    """
+    Carga los datos del archivo goalscorers.csv.
+    """
+    goalscorersfile = cf.data_dir + 'football/goalscorers-utf8-small.csv'
+    input_file = csv.DictReader(open(goalscorersfile, encoding='utf-8'))
+    for goal in input_file:
+        model.add_goalscorers1(catalog['model'], goal)
+
+def loadResults1(catalog):
+    """
+    Carga los datos del archivo results-utf8-small.csv.
+    """
+    resultsfile = cf.data_dir + 'football/results-utf8-small.csv'
+    input_file = csv.DictReader(open(resultsfile, encoding='utf-8'))
+    for result in input_file:
+        model.add_results1(catalog['model'], result)
+
+def loadShootouts1(catalog):
+    """
+    Carga los datos del archivo shootouts-utf8-small.csv.
+    """
+    shootoutsfile = cf.data_dir + 'football/shootouts-utf8-small.csv'
+    input_file = csv.DictReader(open(shootoutsfile, encoding='utf-8'))
+    for shootout in input_file:
+        model.add_shootouts1(catalog['model'], shootout)
+# ...
+
 def loadData(control):
     """
     Carga los datos de los archivos y cargar los datos en la
     estructura de datos
     """
-    """goalscore, results, shootouts = model.new_data_structs(control)
-    """
-    data = control['model']
-    goalscore = data['goalscore']
-    results = data['results']
-    shootouts = data['shootouts']
-    #sort(data)
-    return goalscore, results, shootouts
+    model.sort(control['model'])
 
-
-
-
-# Funciones de ordenamiento
-
-def sort(control):
-    """
-    Ordena los datos del modelo
-    """
-    #TODO: Llamar la función del modelo para ordenar los datos
-    pass
 
 
 # Funciones de consulta sobre el catálogo
@@ -91,13 +105,14 @@ def req_1(control):
     # TODO: Modificar el requerimiento 1
     pass
 
+#req 2
+def get_first_n_goals_by_player(control, player_name, n):
+    data_structs = control['model']
+    total_goals, player_goals = model.get_first_n_goals_by_player(data_structs, player_name, n)
+    return total_goals, player_goals
 
-def req_2(control):
-    """
-    Retorna el resultado del requerimiento 2
-    """
-    # TODO: Modificar el requerimiento 2
-    pass
+
+
 
 
 def req_3(control):
@@ -161,7 +176,8 @@ def delta_time(start, end):
     devuelve la diferencia entre tiempos de procesamiento muestreados
     """
     elapsed = float(end - start)
-    return elapsed
+    return 
+
 
 def sixdata(tableList):
     if model.lt.size(tableList) <=6:
