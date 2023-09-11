@@ -58,9 +58,8 @@ def new_data_structs(tipo_lista):
         data['results'] = lt.newList('SINGLE_LINKED')
         data['shootouts'] = lt.newList('SINGLE_LINKED')  
     return data
+#limpiar las
 
-
-#Agregar elementos
         
 def add_goalscorers1(data_structs, data):
     """
@@ -178,16 +177,13 @@ def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
     date1 = datetime.datetime.strptime(resultado1['date'], date_format)
     date2 = datetime.datetime.strptime(resultado2['date'], date_format)
 
-    if date1 < date2:
-        return True
-    elif date1 > date2:
-        return False
+    if date1 != date2:
+        return date1 < date2
     else:
         # Si las fechas son iguales, ordenar por nombre de país
         country1 = resultado1['home_team']
         country2 = resultado2['home_team']
         return country1 < country2
-
         
 
 def req_1(data_structs):
@@ -286,14 +282,27 @@ def compare(data_1, data_2):
     #TODO: Crear función comparadora de la lista
     pass
 
+
+
+
+    
 # Funciones de ordenamiento
-def sort(data):
+
+def sort(data, ordenamiento):
     # Ordenar las listas usando los criterios de comparación definidos
-    
-    sa.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
-    sa.sort(data['results'], cmp_partidos_by_fecha_y_pais)
-    sa.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)
-    
+    if ordenamiento == "Shell".lower():
+        sa.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
+        sa.sort(data['results'], cmp_partidos_by_fecha_y_pais)
+        sa.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)
+    elif ordenamiento == "Selection".lower():
+        se.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
+        se.sort(data['results'], cmp_partidos_by_fecha_y_pais)
+        se.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)    
+    elif ordenamiento == "Insertion".lower():
+        ins.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
+        ins.sort(data['results'], cmp_partidos_by_fecha_y_pais)
+        ins.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)    
+       
 
 # Funciones de ordenamiento
 

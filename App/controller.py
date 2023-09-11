@@ -34,7 +34,7 @@ El controlador se encarga de mediar entre la vista y el modelo.
 
 
 
-def new_controller(tipo_lista="ARRAY_LIST"):
+def new_controller(tipo_lista):
     """
     Crea una instancia del modelo
     """
@@ -47,10 +47,9 @@ def new_controller(tipo_lista="ARRAY_LIST"):
 
 
 # Funciones para la carga de datos
+    
 
 
-
-#Datos con repeticiones
 
 def loadGoalscorers1(catalog, sample_option):
     """
@@ -90,15 +89,20 @@ def loadShootouts1(catalog, sample_option):
         model.add_shootouts1(catalog['model'], shootout)
 # ...
 
-def loadData(control):
+def sortData(control, ordenamiento):
     """
     Carga los datos de los archivos y cargar los datos en la
     estructura de datos
     """
-    model.sort(control['model'])
+
+    start_time = get_time()
+    model.sort(control["model"], ordenamiento)
+    end_time = get_time()
+    deltatime = delta_time(start_time, end_time)
+    return deltatime
 
 
-
+#limpiar listas
 # Funciones de consulta sobre el catálogo
 
 def get_data(control, id):
@@ -187,7 +191,7 @@ def delta_time(start, end):
     devuelve la diferencia entre tiempos de procesamiento muestreados
     """
     elapsed = float(end - start)
-    return 
+    return elapsed
 
 
 def sixdata(tableList):
