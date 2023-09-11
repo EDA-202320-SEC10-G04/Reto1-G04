@@ -214,10 +214,45 @@ def sortName(data,name_team, condition_team, number_matchs):
                 derecha = medio - 1  # El elemento está en la mitad izquierda
         
     elif condition_team.lower() == "visitante":
-        NameSort = sa.sort(data, compare_away)
+        NameSort = sa.sort(data, compare_home)
+        for name in lt.iterator(NameSort):
+            
+            name_value = name['home_team'].lower()
+            newList.append(name_value)
+        i = 0
+        work = True
+        indices = []
+        izquierda = 0
+        derecha = len(newList) - 1
+        x = newList
+        while izquierda <= derecha and work:
+            medio = (izquierda + derecha) // 2  # Encontramos el índice medio de la lista
+            r = newList[medio]
+            z = name_team.lower()
+            if newList[medio] == name_team.lower():
+                indices.append(medio)  # Hemos encontrado el elemento y agregamos su índice a la lista
+                # Buscamos más ocurrencias hacia la izquierda
+                i = medio - 1
+                while i >= 0 and newList[i] == name_team.lower():
+                    indices.append(i)
+                    i -= 1
+                # Buscamos más ocurrencias hacia la derecha
+                j = medio + 1
+                while j < len(newList) and newList[j] == name_team.lower():
+                    indices.append(j)
+                    j += 1
+                work = False
+
+            elif newList[medio] < name_team.lower():
+                izquierda = medio + 1  # El elemento está en la mitad derecha
+            else:
+                derecha = medio - 1  # El elemento está en la mitad izquierda
 
         pass
     else:
+
+
+        
         pass
     total_teams = lt.newList('ARRAY_LIST')
     answerSort = lt.newList('ARRAY_LIST')
