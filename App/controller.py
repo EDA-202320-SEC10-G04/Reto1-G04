@@ -33,7 +33,7 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 
-def new_controller():
+def new_controller(tipo_lista):
     """
     Crea una instancia del modelo
     """
@@ -41,7 +41,7 @@ def new_controller():
     control = {
         "model" : None
     }
-    control['model'] = model.new_data_structs()
+    control['model'] = model.new_data_structs(tipo_lista)
     return control
 
 
@@ -79,12 +79,20 @@ def loadShootouts1(catalog):
         model.add_shootouts1(catalog['model'], shootout)
 # ...
 
-def loadData(control):
+def sort(control, size):
     """
-    Carga los datos de los archivos y cargar los datos en la
-    estructura de datos
+    Ordena los libros por average_rating y toma el los tiempos en los
+    que se inició la ejecución del requerimiento y cuando finalizó
+    con getTime(). Finalmente calcula el tiempo que demoró la ejecución
+    de la función con deltaTime()
     """
-    model.sort(control['model'])
+    start_time = get_time()
+    sorted_list_g = model.sort_goalscore(control["model"], size)
+    sorted_list_r = model.sort_results(control["model"], size)
+    sorted_list_s = model.sort_shootouts(control["model"], size)
+    end_time = get_time()
+    delta_time = delta_time1(start_time, end_time)
+    return delta_time, sorted_list_r, sorted_list_g, sorted_list_s
 
 
 
@@ -171,12 +179,12 @@ def get_time():
     return float(time.perf_counter()*1000)
 
 
-def delta_time(start, end):
+def delta_time1(start, end):
     """
     devuelve la diferencia entre tiempos de procesamiento muestreados
     """
     elapsed = float(end - start)
-    return 
+    return elapsed
 
 
 def sixdata(tableList):
