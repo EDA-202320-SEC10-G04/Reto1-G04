@@ -42,19 +42,23 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 """
 
 # Construccion de modelos
-def new_data_structs():
+# En model.py
+def new_data_structs(tipo_lista):
     data = {
         'goalscore': None,
         'results': None,
         'shootouts': None,
     }
-    data['goalscore'] = lt.newList('ARRAY_LIST')
-    data['results'] = lt.newList('ARRAY_LIST')
-    data['shootouts'] = lt.newList('ARRAY_LIST')
-    data['unique_goalscorers'] = set()  
-    data['unique_results'] = set()      
-    data['unique_shootouts'] = set()    
+    if tipo_lista == "ARRAY_LIST":
+        data['goalscore'] = lt.newList('ARRAY_LIST')
+        data['results'] = lt.newList('ARRAY_LIST')
+        data['shootouts'] = lt.newList('ARRAY_LIST')
+    elif tipo_lista == "SINGLE_LINKED":
+        data['goalscore'] = lt.newList('SINGLE_LINKED')
+        data['results'] = lt.newList('SINGLE_LINKED')
+        data['shootouts'] = lt.newList('SINGLE_LINKED')  
     return data
+
 
 #Agregar elementos
         
@@ -158,6 +162,32 @@ def compare_shootouts(data1, data2):
             ateam1 = data1['away_team'].lower()
             ateam2 = data2['away_team'].lower()
             return False if ateam1 < ateam2 else True if ateam1 > ateam2 else False
+        # En model.py
+def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
+    """
+    Devuelve verdadero (True) si la fecha del resultado1 es menor que en el resultado2,
+    en caso de que sean iguales tenga el nombre de la ciudad en que se disputó el partido,
+    de lo contrario devuelve falso (False).
+    Args:
+    resultado1: información del primer registro de resultados FIFA que incluye
+    “date” y el “country”
+    resultado2: información del segundo registro de resultados FIFA que incluye
+    “date” y el “country”
+    """
+    date_format = "%Y-%m-%d"
+    date1 = datetime.datetime.strptime(resultado1['date'], date_format)
+    date2 = datetime.datetime.strptime(resultado2['date'], date_format)
+
+    if date1 < date2:
+        return True
+    elif date1 > date2:
+        return False
+    else:
+        # Si las fechas son iguales, ordenar por nombre de país
+        country1 = resultado1['home_team']
+        country2 = resultado2['home_team']
+        return country1 < country2
+
         
 
 def req_1(data_structs):
@@ -259,9 +289,10 @@ def compare(data_1, data_2):
 # Funciones de ordenamiento
 def sort(data):
     # Ordenar las listas usando los criterios de comparación definidos
-    sa.sort(data['goalscore'], compare_goalscore)
-    sa.sort(data['results'], compare_results)
-    sa.sort(data['shootouts'], compare_shootouts)
+    
+    sa.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
+    sa.sort(data['results'], cmp_partidos_by_fecha_y_pais)
+    sa.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)
     
 
 # Funciones de ordenamiento

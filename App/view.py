@@ -42,12 +42,12 @@ operación solicitada
 """
 
 
-def new_controller():
+def new_controller(tipo_lista="ARRAY_LIST"):
     """
         Se crea una instancia del controlador
     """
     #TODO: Llamar la función del controlador donde se crean las estructuras de datos
-    control = controller.new_controller()
+    control = controller.new_controller(tipo_lista)
     return control
 
 
@@ -80,14 +80,14 @@ def printSimpleTable(tableList, keys):
         lines.append(line)
     table.add_rows(lines)
     print(table)
-def load_data_s_r(control):
+def load_data_s_r(control, sample_option):
     """
     Carga los datos desde los archivos CSV.
     """
 
-    goal_score_count = controller.loadGoalscorers1(control)
-    result_count = controller.loadResults1(control)
-    shootout_count = controller.loadShootouts1(control)
+    goal_score_count = controller.loadGoalscorers1(control, sample_option)
+    result_count = controller.loadResults1(control, sample_option)
+    shootout_count = controller.loadShootouts1(control, sample_option)
     controller.loadData(control)
     return goal_score_count, result_count, shootout_count
 
@@ -185,8 +185,11 @@ if __name__ == "__main__":
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
-    
-            load_data_s_r(control)
+            sample_option = input("Selecciona el tamaño de muestra (-20pct, -50pct, -large): ")
+            load_data_s_r(control, sample_option)
+ 
+
+            print(f"Tamaño de muestra seleccionado: {len(sample_option)}")
             print('Match result count: ' + str(lt.size(control['model']['results'])))
             print('Goal scorers count: ' + str(lt.size(control['model']['goalscore'])))
             print('shootout-penalty definition count: ' + str(lt.size(control['model']['shootouts'])))
@@ -228,8 +231,18 @@ if __name__ == "__main__":
         elif int(inputs) == 8:
             print_req_7(control)
 
+        # En view.py
         elif int(inputs) == 9:
-            print_req_8(control)
+            tipo_lista = input("Qué tipo de lista deseas [ARRAY_LIST] o [SINGLE_LINKED]: ")
+            if tipo_lista == "ARRAY_LIST" or tipo_lista == "SINGLE_LINKED":
+             control = new_controller(tipo_lista)
+             print(f"Los datos se han cargado como {tipo_lista}")
+            else:
+                print("Tipo de lista no válido. Se utilizará ARRAY_LIST por defecto.")
+                control = new_controller("ARRAY_LIST")
+            print(f"Tipo de lista actual: {tipo_lista}")
+
+
 
         elif int(inputs) == 0:
             working = False

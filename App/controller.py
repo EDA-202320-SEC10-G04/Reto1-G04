@@ -33,16 +33,17 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 
-def new_controller():
+
+def new_controller(tipo_lista="ARRAY_LIST"):
     """
     Crea una instancia del modelo
     """
-    #TODO: Llamar la función del modelo que crea las estructuras de datos
     control = {
         "model" : None
     }
-    control['model'] = model.new_data_structs()
+    control['model'] = model.new_data_structs(tipo_lista)
     return control
+
 
 
 # Funciones para la carga de datos
@@ -51,29 +52,39 @@ def new_controller():
 
 #Datos con repeticiones
 
-def loadGoalscorers1(catalog):
+def loadGoalscorers1(catalog, sample_option):
     """
     Carga los datos del archivo goalscorers.csv.
     """
-    goalscorersfile = cf.data_dir + 'football/goalscorers-utf8-small.csv'
+    
+
+
+    goalscorersfile = cf.data_dir + f'football/goalscorers-utf8{sample_option}.csv'
+    
     input_file = csv.DictReader(open(goalscorersfile, encoding='utf-8'))
     for goal in input_file:
         model.add_goalscorers1(catalog['model'], goal)
 
-def loadResults1(catalog):
+def loadResults1(catalog, sample_option):
     """
     Carga los datos del archivo results-utf8-small.csv.
     """
-    resultsfile = cf.data_dir + 'football/results-utf8-small.csv'
+
+
+    resultsfile = cf.data_dir + f'football/results-utf8{sample_option}.csv'
     input_file = csv.DictReader(open(resultsfile, encoding='utf-8'))
     for result in input_file:
         model.add_results1(catalog['model'], result)
 
-def loadShootouts1(catalog):
+def loadShootouts1(catalog, sample_option):
     """
     Carga los datos del archivo shootouts-utf8-small.csv.
     """
-    shootoutsfile = cf.data_dir + 'football/shootouts-utf8-small.csv'
+
+
+
+    shootoutsfile = cf.data_dir + f'football/shootouts-utf8{sample_option}.csv'
+
     input_file = csv.DictReader(open(shootoutsfile, encoding='utf-8'))
     for shootout in input_file:
         model.add_shootouts1(catalog['model'], shootout)
