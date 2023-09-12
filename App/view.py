@@ -119,7 +119,7 @@ def print_first_n_goals_by_player(total_goals, player_goals):
         if total_goals > 6:
             player_goals = controller.sixdata(player_goals)
             
-        printSimpleTable(player_goals, keys)
+         
     else:
         print("No se encontraron goles para el jugador especificado.")
 
@@ -253,7 +253,7 @@ if __name__ == "__main__":
             
             print("Para", sample_option, "elementos, delta tiempo:", str(delta_time))
             #------------------------PRINT DATOS ORDENADOS---------------------
-            print(f"Tamaño de muestra seleccionado: {len(sample_option)}")
+            print(f"Tamaño de muestra seleccionado: {lt.size(control['model']['results'])}")
             print('Match result count: ' + str(lt.size(control['model']['results'])))
             print('Goal scorers count: ' + str(lt.size(control['model']['goalscore'])))
             print('shootout-penalty definition count: ' + str(lt.size(control['model']['shootouts'])))
@@ -262,13 +262,7 @@ if __name__ == "__main__":
             sixResults =controller.sixdata(control['model']['results'])
             printSimpleTable(sixResults, ['date','home_team','away_team','home_score','away_score','country','city','tournament'])
            # -----------GOAL SCORES-----------------------------
-            print("-------------------GOAL SCORES-----------------------------")
-            sixgoals = controller.sixdata(control['model']['goalscore'])
-            printSimpleTable(sixgoals,['date','home_team','away_team','scorer','team','minute','penalty','own_goal'])
-            # ------------------- SHOOTOUS----------------------------------------------------------------
-            print("----------------------SHOOTOUS----------------------------------------------------------------")
-            sixshoots = controller.sixdata(control['model']['shootouts'])
-            printSimpleTable(sixshoots,['date','home_team','away_team','winner'])
+
 
 
 

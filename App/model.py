@@ -291,17 +291,17 @@ def compare(data_1, data_2):
 def sort(data, ordenamiento):
     # Ordenar las listas usando los criterios de comparación definidos
     if ordenamiento == "Shell".lower():
-        sa.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
+        #sa.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
         sa.sort(data['results'], cmp_partidos_by_fecha_y_pais)
-        sa.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)
+        #sa.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)
     elif ordenamiento == "Selection".lower():
-        se.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
+        #se.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
         se.sort(data['results'], cmp_partidos_by_fecha_y_pais)
-        se.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)    
+        #se.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)    
     elif ordenamiento == "Insertion".lower():
-        ins.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
+        #ins.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
         ins.sort(data['results'], cmp_partidos_by_fecha_y_pais)
-        ins.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)    
+        #ins.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)    
        
 
 # Funciones de ordenamiento
