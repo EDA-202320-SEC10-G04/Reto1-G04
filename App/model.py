@@ -175,94 +175,76 @@ def compare_away(data1, data2):
         return False
 #req1
 def sortName(data,name_team, condition_team, number_matchs):
-    NameSort = lt.newList('ARRAY_LIST')
     
-    newList = []
+    total_indices = []
     if condition_team.lower() == "local":
-        NameSort = sa.sort(data, compare_home)
-        for name in lt.iterator(NameSort):
-            
-            name_value = name['home_team'].lower()
-            newList.append(name_value)
-        i = 0
-        work = True
-        indices = []
-        izquierda = 0
-        derecha = len(newList) - 1
-        x = newList
-        while izquierda <= derecha and work:
-            medio = (izquierda + derecha) // 2  # Encontramos el índice medio de la lista
-            r = newList[medio]
-            z = name_team.lower()
-            if newList[medio] == name_team.lower():
-                indices.append(medio)  # Hemos encontrado el elemento y agregamos su índice a la lista
-                # Buscamos más ocurrencias hacia la izquierda
-                i = medio - 1
-                while i >= 0 and newList[i] == name_team.lower():
-                    indices.append(i)
-                    i -= 1
-                # Buscamos más ocurrencias hacia la derecha
-                j = medio + 1
-                while j < len(newList) and newList[j] == name_team.lower():
-                    indices.append(j)
-                    j += 1
-                work = False
-
-            elif newList[medio] < name_team.lower():
-                izquierda = medio + 1  # El elemento está en la mitad derecha
-            else:
-                derecha = medio - 1  # El elemento está en la mitad izquierda
-        
+        f ="home_team"
+        indices, NameSort= searchname(data,name_team, condition_team, number_matchs,f)
+        total_indices = indices
+    
     elif condition_team.lower() == "visitante":
-        NameSort = sa.sort(data, compare_home)
-        for name in lt.iterator(NameSort):
-            
-            name_value = name['home_team'].lower()
-            newList.append(name_value)
-        i = 0
-        work = True
-        indices = []
-        izquierda = 0
-        derecha = len(newList) - 1
-        x = newList
-        while izquierda <= derecha and work:
-            medio = (izquierda + derecha) // 2  # Encontramos el índice medio de la lista
-            r = newList[medio]
-            z = name_team.lower()
-            if newList[medio] == name_team.lower():
-                indices.append(medio)  # Hemos encontrado el elemento y agregamos su índice a la lista
-                # Buscamos más ocurrencias hacia la izquierda
-                i = medio - 1
-                while i >= 0 and newList[i] == name_team.lower():
-                    indices.append(i)
-                    i -= 1
-                # Buscamos más ocurrencias hacia la derecha
-                j = medio + 1
-                while j < len(newList) and newList[j] == name_team.lower():
-                    indices.append(j)
-                    j += 1
-                work = False
+        f ="away_team"
+        indices, Namesort= searchname(data,name_team, condition_team, number_matchs,f)
+        total_indices = indices
 
-            elif newList[medio] < name_team.lower():
-                izquierda = medio + 1  # El elemento está en la mitad derecha
-            else:
-                derecha = medio - 1  # El elemento está en la mitad izquierda
-
-        pass
     else:
-
-
         
-        pass
+        f ="home_team"
+        indices1, Namesort= searchname(data,name_team, condition_team, number_matchs,f, )
+        f ="away_team"
+        indices2, NameSort= searchname(data,name_team, condition_team, number_matchs,f )
+        total_indices.append(indices1, indices2,)
+
+
     total_teams = lt.newList('ARRAY_LIST')
     answerSort = lt.newList('ARRAY_LIST')
-    for i in indices:
-        element= lt.getElement(NameSort,i)
+    for i in total_indices:
+        element= lt.getElement(NameSort,i+1)
         lt.addFirst(total_teams,element)
     answer= sa.sort(total_teams, compare_shootouts)
     answerSort = getFirstNum(number_matchs,answer)
     return answerSort
  
+
+def searchname(data,name_team, condition_team, number_matchs,f):
+        NameSort = lt.newList('ARRAY_LIST')
+        newList = []
+        NameSort = sa.sort(data, compare_home)
+        
+        for name in lt.iterator(NameSort):
+            
+            name_value = name[f].lower()
+            newList.append(name_value)
+        
+        i = 0
+        work = True
+        indices = []
+        izquierda = 0
+        derecha = len(newList) - 1
+        x = newList
+        while izquierda <= derecha and work:
+            medio = (izquierda + derecha) // 2  # Encontramos el índice medio de la lista
+            r = newList[medio]
+            z = name_team.lower()
+            if newList[medio] == name_team.lower():
+                indices.append(medio)  # Hemos encontrado el elemento y agregamos su índice a la lista
+                # Buscamos más ocurrencias hacia la izquierda
+                i = medio - 1
+                while i >= 0 and newList[i] == name_team.lower():
+                    indices.append(i)
+                    i -= 1
+                # Buscamos más ocurrencias hacia la derecha
+                j = medio + 1
+                while j < len(newList) and newList[j] == name_team.lower():
+                    indices.append(j)
+                    j += 1
+                work = False
+
+            elif newList[medio] < name_team.lower():
+                izquierda = medio + 1  # El elemento está en la mitad derecha
+            else:
+                derecha = medio - 1  # El elemento está en la mitad izquierda
+        return indices, NameSort
 
 #req 2
 def get_first_n_goals_by_player(data_structs, player_name, n):
