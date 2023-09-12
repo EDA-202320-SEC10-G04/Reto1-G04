@@ -61,10 +61,13 @@ def print_menu():
     print("6- Consultar anotaciones de un jugador en un periodo de tiempo")
     print("7- Clasificar los mejores equipos de un torneo en un periodo")
     print("8- Clasificar los mejores anotadores en partidos oficiales en un periodo")
-    print("9- Comparar el desempeño de dos selecciones en torneos oficiales")
+    print("9- Seleccionar el tipo de lista y el tipo de ordenamiento")
     print("0- Salir")
 #pretty table
 def printSimpleTable(tableList, keys):
+    """
+    Función encargada de mostrar los datos en tablas
+    """
     table = PrettyTable()
     table.max_width = 20
     table.hrules =ALL
@@ -82,7 +85,7 @@ def printSimpleTable(tableList, keys):
     print(table)
 def load_data_s_r(control, sample_option):
     """
-    Carga los datos desde los archivos CSV.
+    Carga los datos desde las funciones de carga de datos y devuelve las listas.
     """
 
     goal_score_count = controller.loadGoalscorers1(control, sample_option)
@@ -108,6 +111,12 @@ def print_req_1(control):
     pass
 
 def print_first_n_goals_by_player(total_goals, player_goals):
+    """Muestra los goles del jugador usando printSimpleTable
+
+    Args:
+        total_goals (_type_): _description_
+        player_goals (_type_): _description_
+    """
     print(f"Total de goles anotados por el jugador: {total_goals}\n")
     print("Detalles de los goles:")
     
@@ -118,7 +127,8 @@ def print_first_n_goals_by_player(total_goals, player_goals):
 
         if total_goals > 6:
             player_goals = controller.sixdata(player_goals)
-            
+         
+        printSimpleTable(player_goals,keys)
          
     else:
         print("No se encontraron goles para el jugador especificado.")
@@ -238,7 +248,7 @@ if __name__ == "__main__":
 
         elif int(inputs) == 9:
             tipo_lista = input("Qué tipo de lista deseas [ARRAY_LIST] o [SINGLE_LINKED]: ")
-            if tipo_lista == "ARRAY_LIST" or tipo_lista == "SINGLE_LINKED":
+            if tipo_lista.upper() == "ARRAY_LIST" or tipo_lista.upper() == "SINGLE_LINKED":
              control = new_controller(tipo_lista)
              print(f"Los datos se han cargado como {tipo_lista}")
             else:

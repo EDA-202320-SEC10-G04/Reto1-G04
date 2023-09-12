@@ -53,7 +53,7 @@ def new_controller(tipo_lista):
 
 def loadGoalscorers1(catalog, sample_option):
     """
-    Carga los datos del archivo goalscorers.csv.
+    Carga los datos del archivo goalscorers.
     """
     
 
@@ -66,7 +66,7 @@ def loadGoalscorers1(catalog, sample_option):
 
 def loadResults1(catalog, sample_option):
     """
-    Carga los datos del archivo results-utf8-small.csv.
+    Carga los datos del archivo results.
     """
 
 
@@ -77,7 +77,7 @@ def loadResults1(catalog, sample_option):
 
 def loadShootouts1(catalog, sample_option):
     """
-    Carga los datos del archivo shootouts-utf8-small.csv.
+    Carga los datos del archivo shootouts.
     """
 
 
@@ -91,8 +91,7 @@ def loadShootouts1(catalog, sample_option):
 
 def sortData(control, ordenamiento):
     """
-    Carga los datos de los archivos y cargar los datos en la
-    estructura de datos
+    Ordena los datos y toma el tiempo de ordenamiento
     """
 
     start_time = get_time()
@@ -122,6 +121,7 @@ def req_1(control):
 
 #req 2
 def get_first_n_goals_by_player(control, player_name, n):
+    "Retorna los goles totales de un jugador, y los últimos n goles"
     data_structs = control['model']
     total_goals, player_goals = model.get_first_n_goals_by_player(data_structs, player_name, n)
     return total_goals, player_goals

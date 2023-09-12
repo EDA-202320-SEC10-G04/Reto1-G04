@@ -216,13 +216,14 @@ def get_first_n_goals_by_player(data_structs, player_name, n):
     
 
 def get_total_goals_by_player(data_structs, player_name):
+    
     goals = data_structs['goalscore']
     player_goals = lt.newList('ARRAY_LIST')
     
     for goal in lt.iterator(goals):
         if goal['scorer'].lower() == player_name.lower():
             lt.addLast(player_goals, goal)
-    
+    se.sort(player_goals, cmp_partidos_by_fecha_y_pais)
     return lt.size(player_goals)
 
 def req_3(data_structs):
