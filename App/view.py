@@ -27,7 +27,6 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import stack as st
 from DISClib.ADT import queue as qu
 assert cf
-from tabulate import tabulate
 import traceback
 from prettytable import PrettyTable, ALL
 
@@ -114,8 +113,8 @@ def print_first_n_goals_by_player(total_goals, player_goals):
     """Muestra los goles del jugador usando printSimpleTable
 
     Args:
-        total_goals (_type_): _description_
-        player_goals (_type_): _description_
+        total_goals (int): Total de goles
+        player_goals (int): Total de goles por jugador
     """
     print(f"Total de goles anotados por el jugador: {total_goals}\n")
     print("Detalles de los goles:")
@@ -199,7 +198,7 @@ if __name__ == "__main__":
         if int(inputs) == 1:
                         
             tipo_lista = "ARRAY_LIST"
-            sample_option = input("Selecciona el tamaño de muestra (-20pct, -50pct, -large): ")
+            sample_option = input("Selecciona el tamaño de muestra (-5pct, -20pct, -30pct, -50pct, -large): ")
             load_data_s_r(control, sample_option)
  
 
