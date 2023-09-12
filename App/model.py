@@ -197,7 +197,7 @@ def req_1(data_structs):
 def get_first_n_goals_by_player(data_structs, player_name, n):
     player_goals = lt.newList('ARRAY_LIST')
     total_goals = 0
-
+    sa.sort(data_structs["goalscore"], cmp_partidos_by_fecha_y_pais)
     # Recorremos la lista de goles y seleccionamos los que coincidan con el jugador
 
     for goal in lt.iterator(data_structs['goalscore']):
@@ -206,6 +206,7 @@ def get_first_n_goals_by_player(data_structs, player_name, n):
             total_goals += 1
             if total_goals == n:
                 break
+
 
     return total_goals, player_goals
 
