@@ -175,7 +175,7 @@ def compare_away(data1, data2):
         return False
 #req1
 def sortName(data,name_team, condition_team, number_matchs):
-    
+    e =0
     total_indices = []
     if condition_team.lower() == "local":
         f ="home_team"
@@ -184,33 +184,47 @@ def sortName(data,name_team, condition_team, number_matchs):
     
     elif condition_team.lower() == "visitante":
         f ="away_team"
-        indices, Namesort= searchname(data,name_team, condition_team, number_matchs,f)
+        indices, NameSort= searchname(data,name_team, condition_team, number_matchs,f)
         total_indices = indices
 
     else:
-        
+        e =1
         f ="home_team"
-        indices1, Namesort= searchname(data,name_team, condition_team, number_matchs,f, )
-        f ="away_team"
-        indices2, NameSort= searchname(data,name_team, condition_team, number_matchs,f )
-        total_indices.append(indices1, indices2,)
+        indices1, NameSort1= searchname(data,name_team, condition_team, number_matchs,f)
+        z ="away_team"
+        indices2, NameSort2= searchname(data,name_team, condition_team, number_matchs,z)
+        
+    if e==1:
+        total_teams = lt.newList('ARRAY_LIST')
+        answerSort = lt.newList('ARRAY_LIST')
+        for i in indices1:
+            element= lt.getElement(NameSort1,i+1)
+            lt.addFirst(total_teams,element)
+        for i in indices2:
+            element= lt.getElement(NameSort2,i+1)
+            lt.addFirst(total_teams,element)
+        answer= sa.sort(total_teams, compare_shootouts)
+        answerSort = getFirstNum(number_matchs,answer)
+        return answerSort
 
-
-    total_teams = lt.newList('ARRAY_LIST')
-    answerSort = lt.newList('ARRAY_LIST')
-    for i in total_indices:
-        element= lt.getElement(NameSort,i+1)
-        lt.addFirst(total_teams,element)
-    answer= sa.sort(total_teams, compare_shootouts)
-    answerSort = getFirstNum(number_matchs,answer)
-    return answerSort
+    else:
+        total_teams = lt.newList('ARRAY_LIST')
+        answerSort = lt.newList('ARRAY_LIST')
+        for i in total_indices:
+            element= lt.getElement(NameSort,i+1)
+            lt.addFirst(total_teams,element)
+        answer= sa.sort(total_teams, compare_shootouts)
+        answerSort = getFirstNum(number_matchs,answer)
+        return answerSort
  
 
 def searchname(data,name_team, condition_team, number_matchs,f):
         NameSort = lt.newList('ARRAY_LIST')
         newList = []
-        NameSort = sa.sort(data, compare_home)
-        
+        if f=='home_team':
+            NameSort = sa.sort(data, compare_home)
+        else:
+            NameSort = sa.sort(data, compare_away)
         for name in lt.iterator(NameSort):
             
             name_value = name[f].lower()
