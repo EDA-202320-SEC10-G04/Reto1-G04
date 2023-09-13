@@ -162,6 +162,34 @@ def compare_shootouts(data1, data2):
             ateam2 = data2['away_team'].lower()
             return False if ateam1 < ateam2 else True if ateam1 > ateam2 else False
 
+
+
+
+        # En model.py
+def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
+    """
+    Devuelve verdadero (True) si la fecha del resultado1 es menor que en el resultado2,
+    en caso de que sean iguales tenga el nombre de la ciudad en que se disputó el partido,
+    de lo contrario devuelve falso (False).
+    Args:
+    resultado1: información del primer registro de resultados FIFA que incluye
+    “date” y el “country”
+    resultado2: información del segundo registro de resultados FIFA que incluye
+    “date” y el “country”
+    """
+    date_format = "%Y-%m-%d"
+    date1 = datetime.datetime.strptime(resultado1['date'], date_format)
+    date2 = datetime.datetime.strptime(resultado2['date'], date_format)
+
+    if date1 != date2:
+        return date1 < date2
+    else:
+        # Si las fechas son iguales, ordenar por nombre de país
+        country1 = resultado1['home_team']
+        country2 = resultado2['home_team']
+        return country1 < country2
+        
+
        
 def compare_home(data1, data2):
     team1 = data1['home_team'].lower()
@@ -191,13 +219,14 @@ def sortName(data,name_team, condition_team, number_matchs):
         indices, NameSort= searchname(data,name_team, condition_team, number_matchs,f)
         total_indices = indices
 
+
     else:
         e =1
         f ="home_team"
         indices1, NameSort1= searchname(data,name_team, condition_team, number_matchs,f)
         z ="away_team"
         indices2, NameSort2= searchname(data,name_team, condition_team, number_matchs,z)
-=======
+
         # En model.py
 def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
     """
