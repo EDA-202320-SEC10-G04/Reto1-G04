@@ -221,7 +221,11 @@ if __name__ == "__main__":
 
 
         elif int(inputs) == 2:
-            print_req_1(control)
+            number_matchs =int( input("Ingrese el numero de partidos: "))
+            name_team = input("Ingrese el nombre del Equipo: ")
+            condition_team = input("Ingrese la condicion del equipo (local, visitante o indiferente): ")
+            total_matchs = controller.sortName(control['model']['results'], name_team, condition_team, number_matchs)
+            printSimpleTable(total_matchs,['date','home_team','away_team','country','city','home_score','away_score'])
 
         elif int(inputs) == 3:
             player_name = input("Ingrese el nombre del jugador: ")
