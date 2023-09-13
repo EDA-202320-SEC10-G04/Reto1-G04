@@ -206,26 +206,7 @@ def compare_away(data1, data2):
     elif team1 > team2:
         return False
 #req1
-def sortName(data,name_team, condition_team, number_matchs):
-    e =0
-    total_indices = []
-    if condition_team.lower() == "local":
-        f ="home_team"
-        indices, NameSort= searchname(data,name_team, condition_team, number_matchs,f)
-        total_indices = indices
-    
-    elif condition_team.lower() == "visitante":
-        f ="away_team"
-        indices, NameSort= searchname(data,name_team, condition_team, number_matchs,f)
-        total_indices = indices
 
-
-    else:
-        e =1
-        f ="home_team"
-        indices1, NameSort1= searchname(data,name_team, condition_team, number_matchs,f)
-        z ="away_team"
-        indices2, NameSort2= searchname(data,name_team, condition_team, number_matchs,z)
 
         # En model.py
 def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
@@ -251,7 +232,26 @@ def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
         country2 = resultado2['home_team']
         return country1 < country2
 
-        
+def sortName(data,name_team, condition_team, number_matchs):
+    e =0
+    total_indices = []
+    if condition_team.lower() == "local":
+        f ="home_team"
+        indices, NameSort= searchname(data,name_team, condition_team, number_matchs,f)
+        total_indices = indices
+    
+    elif condition_team.lower() == "visitante":
+        f ="away_team"
+        indices, NameSort= searchname(data,name_team, condition_team, number_matchs,f)
+        total_indices = indices
+
+
+    else:
+        e =1
+        f ="home_team"
+        indices1, NameSort1= searchname(data,name_team, condition_team, number_matchs,f)
+        z ="away_team"
+        indices2, NameSort2= searchname(data,name_team, condition_team, number_matchs,z)      
     if e==1:
         total_teams = lt.newList('ARRAY_LIST')
         answerSort = lt.newList('ARRAY_LIST')
