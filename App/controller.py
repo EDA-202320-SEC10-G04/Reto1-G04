@@ -33,61 +33,75 @@ El controlador se encarga de mediar entre la vista y el modelo.
 """
 
 
-def new_controller():
+
+def new_controller(tipo_lista):
     """
     Crea una instancia del modelo
     """
-    #TODO: Llamar la función del modelo que crea las estructuras de datos
     control = {
         "model" : None
     }
-    control['model'] = model.new_data_structs()
+    control['model'] = model.new_data_structs(tipo_lista)
     return control
 
 
+
 # Funciones para la carga de datos
+    
 
 
 
-#Datos con repeticiones
-
-def loadGoalscorers1(catalog):
+def loadGoalscorers1(catalog, sample_option):
     """
-    Carga los datos del archivo goalscorers.csv.
+    Carga los datos del archivo goalscorers.
     """
-    goalscorersfile = cf.data_dir + 'football/goalscorers-utf8-small.csv'
+    
+
+
+    goalscorersfile = cf.data_dir + f'football/goalscorers-utf8{sample_option}.csv'
+    
     input_file = csv.DictReader(open(goalscorersfile, encoding='utf-8'))
     for goal in input_file:
         model.add_goalscorers1(catalog['model'], goal)
 
-def loadResults1(catalog):
+def loadResults1(catalog, sample_option):
     """
-    Carga los datos del archivo results-utf8-small.csv.
+    Carga los datos del archivo results.
     """
-    resultsfile = cf.data_dir + 'football/results-utf8-small.csv'
+
+
+    resultsfile = cf.data_dir + f'football/results-utf8{sample_option}.csv'
     input_file = csv.DictReader(open(resultsfile, encoding='utf-8'))
     for result in input_file:
         model.add_results1(catalog['model'], result)
 
-def loadShootouts1(catalog):
+def loadShootouts1(catalog, sample_option):
     """
-    Carga los datos del archivo shootouts-utf8-small.csv.
+    Carga los datos del archivo shootouts.
     """
-    shootoutsfile = cf.data_dir + 'football/shootouts-utf8-small.csv'
+
+
+
+    shootoutsfile = cf.data_dir + f'football/shootouts-utf8{sample_option}.csv'
+
     input_file = csv.DictReader(open(shootoutsfile, encoding='utf-8'))
     for shootout in input_file:
         model.add_shootouts1(catalog['model'], shootout)
 # ...
 
-def loadData(control):
+def sortData(control, ordenamiento):
     """
-    Carga los datos de los archivos y cargar los datos en la
-    estructura de datos
+    Ordena los datos y toma el tiempo de ordenamiento
     """
-    model.sort(control['model'])
+
+    start_time = get_time()
+    model.sort(control["model"], ordenamiento)
+    end_time = get_time()
+    deltatime = delta_time(start_time, end_time)
+    return deltatime
 
 
-
+#limpiar listas
 # Funciones de consulta sobre el catálogo
 
 def get_data(control, id):
@@ -104,6 +118,7 @@ def sortName(data, name_team, condition_team, number_matchs):
 
 #req 2
 def get_first_n_goals_by_player(control, player_name, n):
+    "Retorna los goles totales de un jugador, y los últimos n goles"
     data_structs = control['model']
     total_goals, player_goals = model.get_first_n_goals_by_player(data_structs, player_name, n)
     return total_goals, player_goals
@@ -173,7 +188,7 @@ def delta_time(start, end):
     devuelve la diferencia entre tiempos de procesamiento muestreados
     """
     elapsed = float(end - start)
-    return 
+    return elapsed
 
 
 def sixdata(tableList):

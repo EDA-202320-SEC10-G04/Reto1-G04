@@ -27,7 +27,6 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import stack as st
 from DISClib.ADT import queue as qu
 assert cf
-from tabulate import tabulate
 import traceback
 from prettytable import PrettyTable, ALL
 
@@ -42,12 +41,12 @@ operación solicitada
 """
 
 
-def new_controller():
+def new_controller(tipo_lista="ARRAY_LIST"):
     """
         Se crea una instancia del controlador
     """
     #TODO: Llamar la función del controlador donde se crean las estructuras de datos
-    control = controller.new_controller()
+    control = controller.new_controller(tipo_lista)
     return control
 
 
@@ -61,10 +60,13 @@ def print_menu():
     print("6- Consultar anotaciones de un jugador en un periodo de tiempo")
     print("7- Clasificar los mejores equipos de un torneo en un periodo")
     print("8- Clasificar los mejores anotadores en partidos oficiales en un periodo")
-    print("9- Comparar el desempeño de dos selecciones en torneos oficiales")
+    print("9- Seleccionar el tipo de lista y el tipo de ordenamiento")
     print("0- Salir")
 #pretty table
 def printSimpleTable(tableList, keys):
+    """
+    Función encargada de mostrar los datos en tablas
+    """
     table = PrettyTable()
     table.max_width = 20
     table.hrules =ALL
@@ -80,18 +82,19 @@ def printSimpleTable(tableList, keys):
         lines.append(line)
     table.add_rows(lines)
     print(table)
-def load_data_s_r(control):
+def load_data_s_r(control, sample_option):
     """
-    Carga los datos desde los archivos CSV.
+    Carga los datos desde las funciones de carga de datos y devuelve las listas.
     """
 
-    goal_score_count = controller.loadGoalscorers1(control)
-    result_count = controller.loadResults1(control)
-    shootout_count = controller.loadShootouts1(control)
-    controller.loadData(control)
+    goal_score_count = controller.loadGoalscorers1(control, sample_option)
+    result_count = controller.loadResults1(control, sample_option)
+    shootout_count = controller.loadShootouts1(control, sample_option)
+    
     return goal_score_count, result_count, shootout_count
-
-
+def sortData(control, ordenamiento):
+    time = controller.sortData(control, ordenamiento)
+    return time
     
 def print_data(control, id):
     """
@@ -107,17 +110,25 @@ def print_req_1(control):
     pass
 
 def print_first_n_goals_by_player(total_goals, player_goals):
+    """Muestra los goles del jugador usando printSimpleTable
+
+    Args:
+        total_goals (int): Total de goles
+        player_goals (int): Total de goles por jugador
+    """
     print(f"Total de goles anotados por el jugador: {total_goals}\n")
     print("Detalles de los goles:")
     
     if total_goals > 0:
         keys = ['date', 'home_team', 'away_team', 'scorer', 'minute', 'penalty', 'own_goal']
 
-        printSimpleTable(player_goals, keys)
+        
 
         if total_goals > 6:
             player_goals = controller.sixdata(player_goals)
-            printSimpleTable(player_goals, keys)
+         
+        printSimpleTable(player_goals,keys)
+         
     else:
         print("No se encontraron goles para el jugador especificado.")
 
@@ -185,8 +196,13 @@ if __name__ == "__main__":
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
         if int(inputs) == 1:
-    
-            load_data_s_r(control)
+                        
+            tipo_lista = "ARRAY_LIST"
+            sample_option = input("Selecciona el tamaño de muestra (-5pct, -20pct, -30pct, -50pct, -large): ")
+            load_data_s_r(control, sample_option)
+ 
+
+            print(f"Tamaño de muestra seleccionado: {len(sample_option)}")
             print('Match result count: ' + str(lt.size(control['model']['results'])))
             print('Goal scorers count: ' + str(lt.size(control['model']['goalscore'])))
             print('shootout-penalty definition count: ' + str(lt.size(control['model']['shootouts'])))
@@ -232,8 +248,36 @@ if __name__ == "__main__":
         elif int(inputs) == 8:
             print_req_7(control)
 
+
         elif int(inputs) == 9:
-            print_req_8(control)
+            tipo_lista = input("Qué tipo de lista deseas [ARRAY_LIST] o [SINGLE_LINKED]: ")
+            if tipo_lista.upper() == "ARRAY_LIST" or tipo_lista.upper() == "SINGLE_LINKED":
+             control = new_controller(tipo_lista)
+             print(f"Los datos se han cargado como {tipo_lista}")
+            else:
+                print("Tipo de lista no válido. Se utilizará ARRAY_LIST por defecto.")
+                control = new_controller("ARRAY_LIST")
+            print(f"Tipo de lista actual: {tipo_lista}")
+            load_data_s_r(control, sample_option)
+            print("Seleccione el tipo de algoritmo de ordenamiento (Selection, Insertion o Shell):")
+            ordenamiento = input().lower()
+            a = sortData(control, ordenamiento )
+            delta_time = f"{a}"
+            
+            print("Para", sample_option, "elementos, delta tiempo:", str(delta_time))
+            #------------------------PRINT DATOS ORDENADOS---------------------
+            print(f"Tamaño de muestra seleccionado: {lt.size(control['model']['results'])}")
+            print('Match result count: ' + str(lt.size(control['model']['results'])))
+            print('Goal scorers count: ' + str(lt.size(control['model']['goalscore'])))
+            print('shootout-penalty definition count: ' + str(lt.size(control['model']['shootouts'])))
+            #--------------------MATCH RESULTS ----------------------
+            print("--------------------MATCH RESULTS --------------------")
+            sixResults =controller.sixdata(control['model']['results'])
+            printSimpleTable(sixResults, ['date','home_team','away_team','home_score','away_score','country','city','tournament'])
+           # -----------GOAL SCORES-----------------------------
+
+
+
 
         elif int(inputs) == 0:
             working = False

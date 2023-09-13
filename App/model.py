@@ -42,21 +42,24 @@ dos listas, una para los videos, otra para las categorias de los mismos.
 """
 
 # Construccion de modelos
-def new_data_structs():
+# En model.py
+def new_data_structs(tipo_lista):
     data = {
         'goalscore': None,
         'results': None,
         'shootouts': None,
     }
-    data['goalscore'] = lt.newList('ARRAY_LIST')
-    data['results'] = lt.newList('ARRAY_LIST')
-    data['shootouts'] = lt.newList('ARRAY_LIST')
-    data['unique_goalscorers'] = set()  
-    data['unique_results'] = set()      
-    data['unique_shootouts'] = set()    
+    if tipo_lista == "ARRAY_LIST":
+        data['goalscore'] = lt.newList('ARRAY_LIST')
+        data['results'] = lt.newList('ARRAY_LIST')
+        data['shootouts'] = lt.newList('ARRAY_LIST')
+    elif tipo_lista == "SINGLE_LINKED":
+        data['goalscore'] = lt.newList('SINGLE_LINKED')
+        data['results'] = lt.newList('SINGLE_LINKED')
+        data['shootouts'] = lt.newList('SINGLE_LINKED')  
     return data
+#limpiar las
 
-#Agregar elementos
         
 def add_goalscorers1(data_structs, data):
     """
@@ -158,6 +161,7 @@ def compare_shootouts(data1, data2):
             ateam1 = data1['away_team'].lower()
             ateam2 = data2['away_team'].lower()
             return False if ateam1 < ateam2 else True if ateam1 > ateam2 else False
+
        
 def compare_home(data1, data2):
     team1 = data1['home_team'].lower()
@@ -193,6 +197,31 @@ def sortName(data,name_team, condition_team, number_matchs):
         indices1, NameSort1= searchname(data,name_team, condition_team, number_matchs,f)
         z ="away_team"
         indices2, NameSort2= searchname(data,name_team, condition_team, number_matchs,z)
+=======
+        # En model.py
+def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
+    """
+    Devuelve verdadero (True) si la fecha del resultado1 es menor que en el resultado2,
+    en caso de que sean iguales tenga el nombre de la ciudad en que se disputó el partido,
+    de lo contrario devuelve falso (False).
+    Args:
+    resultado1: información del primer registro de resultados FIFA que incluye
+    “date” y el “country”
+    resultado2: información del segundo registro de resultados FIFA que incluye
+    “date” y el “country”
+    """
+    date_format = "%Y-%m-%d"
+    date1 = datetime.datetime.strptime(resultado1['date'], date_format)
+    date2 = datetime.datetime.strptime(resultado2['date'], date_format)
+
+    if date1 != date2:
+        return date1 < date2
+    else:
+        # Si las fechas son iguales, ordenar por nombre de país
+        country1 = resultado1['home_team']
+        country2 = resultado2['home_team']
+        return country1 < country2
+
         
     if e==1:
         total_teams = lt.newList('ARRAY_LIST')
@@ -264,7 +293,7 @@ def searchname(data,name_team, condition_team, number_matchs,f):
 def get_first_n_goals_by_player(data_structs, player_name, n):
     player_goals = lt.newList('ARRAY_LIST')
     total_goals = 0
-
+    sa.sort(data_structs["goalscore"], cmp_partidos_by_fecha_y_pais)
     # Recorremos la lista de goles y seleccionamos los que coincidan con el jugador
 
     for goal in lt.iterator(data_structs['goalscore']):
@@ -274,17 +303,19 @@ def get_first_n_goals_by_player(data_structs, player_name, n):
             if total_goals == n:
                 break
 
+
     return total_goals, player_goals
 
 
 def get_total_goals_by_player(data_structs, player_name):
+    
     goals = data_structs['goalscore']
     player_goals = lt.newList('ARRAY_LIST')
     
     for goal in lt.iterator(goals):
         if goal['scorer'].lower() == player_name.lower():
             lt.addLast(player_goals, goal)
-    
+    se.sort(player_goals, cmp_partidos_by_fecha_y_pais)
     return lt.size(player_goals)
 
 def req_3(data_structs):
@@ -344,13 +375,27 @@ def compare(data_1, data_2):
     #TODO: Crear función comparadora de la lista
     pass
 
-# Funciones de ordenamiento
-def sort(data):
-    # Ordenar las listas usando los criterios de comparación definidos
-    sa.sort(data['goalscore'], compare_goalscore)
-    sa.sort(data['results'], compare_results)
-    sa.sort(data['shootouts'], compare_shootouts)
+
+
+
     
+# Funciones de ordenamiento
+
+def sort(data, ordenamiento):
+    # Ordenar las listas usando los criterios de comparación definidos
+    if ordenamiento == "Shell".lower():
+        #sa.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
+        sa.sort(data['results'], cmp_partidos_by_fecha_y_pais)
+        #sa.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)
+    elif ordenamiento == "Selection".lower():
+        #se.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
+        se.sort(data['results'], cmp_partidos_by_fecha_y_pais)
+        #se.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)    
+    elif ordenamiento == "Insertion".lower():
+        #ins.sort(data['goalscore'], cmp_partidos_by_fecha_y_pais)
+        ins.sort(data['results'], cmp_partidos_by_fecha_y_pais)
+        #ins.sort(data['shootouts'], cmp_partidos_by_fecha_y_pais)    
+       
 
 # Funciones de ordenamiento
 
