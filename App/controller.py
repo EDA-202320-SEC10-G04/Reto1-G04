@@ -111,13 +111,10 @@ def get_data(control, id):
     #TODO: Llamar la función del modelo para obtener un dato
     pass
 
-
-def req_1(control):
-    """
-    Retorna el resultado del requerimiento 1
-    """
-    # TODO: Modificar el requerimiento 1
-    pass
+#re1
+def sortName(data, name_team, condition_team, number_matchs):
+    total_matchs = model.sortName(data, name_team, condition_team, number_matchs)
+    return total_matchs
 
 #req 2
 def get_first_n_goals_by_player(control, player_name, n, recursive=True):
@@ -206,3 +203,9 @@ def getFirstNum(number, tableList):
 
 def getLastNum(number,tableList):
     return model.getLastNum(number,tableList)
+
+def FindTeam(tableList, name):
+    team = model.getnameTeam(tableList,name)
+    
+    return team
+    

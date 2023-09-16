@@ -27,7 +27,6 @@ from DISClib.ADT import list as lt
 from DISClib.ADT import stack as st
 from DISClib.ADT import queue as qu
 assert cf
-from tabulate import tabulate
 import traceback
 from prettytable import PrettyTable, ALL
 import threading
@@ -116,8 +115,8 @@ def print_first_n_goals_by_player(total_goals, player_goals):
     """Muestra los goles del jugador usando printSimpleTable
 
     Args:
-        total_goals (_type_): _description_
-        player_goals (_type_): _description_
+        total_goals (int): Total de goles
+        player_goals (int): Total de goles por jugador
     """
     print(f"Total de goles anotados por el jugador: {total_goals}\n")
     print("Detalles de los goles:")
@@ -205,7 +204,7 @@ def menu_cycle():
         if int(inputs) == 1:
                         
             tipo_lista = "ARRAY_LIST"
-            sample_option = input("Selecciona el tamaño de muestra (-20pct, -50pct, -large): ")
+            sample_option = input("Selecciona el tamaño de muestra (-5pct, -20pct, -30pct, -50pct, -large): ")
             load_data_s_r(control, sample_option)
  
 
@@ -228,7 +227,11 @@ def menu_cycle():
 
 
         elif int(inputs) == 2:
-            print_req_1(control)
+            number_matchs =int( input("Ingrese el numero de partidos: "))
+            name_team = input("Ingrese el nombre del Equipo: ")
+            condition_team = input("Ingrese la condicion del equipo (local, visitante o indiferente): ")
+            total_matchs = controller.sortName(control['model']['results'], name_team, condition_team, number_matchs)
+            printSimpleTable(total_matchs,['date','home_team','away_team','country','city','home_score','away_score'])
 
         elif int(inputs) == 3:
             player_name = input("Ingrese el nombre del jugador: ")

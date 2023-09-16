@@ -161,6 +161,10 @@ def compare_shootouts(data1, data2):
             ateam1 = data1['away_team'].lower()
             ateam2 = data2['away_team'].lower()
             return False if ateam1 < ateam2 else True if ateam1 > ateam2 else False
+
+
+
+
         # En model.py
 def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
     """
@@ -186,19 +190,140 @@ def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
         return country1 < country2
         
 
-def req_1(data_structs):
+       
+def compare_home(data1, data2):
+    team1 = data1['home_team'].lower()
+    team2 = data2['home_team'].lower()
+    if team1 < team2:
+        return True
+    elif team1 > team2:
+        return False
+def compare_away(data1, data2):
+    team1 = data1['away_team'].lower()
+    team2 = data2['away_team'].lower()
+    if team1 < team2:
+        return True
+    elif team1 > team2:
+        return False
+#req1
+
+
+        # En model.py
+def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
     """
-    Función que soluciona el requerimiento 1
+    Devuelve verdadero (True) si la fecha del resultado1 es menor que en el resultado2,
+    en caso de que sean iguales tenga el nombre de la ciudad en que se disputó el partido,
+    de lo contrario devuelve falso (False).
+    Args:
+    resultado1: información del primer registro de resultados FIFA que incluye
+    “date” y el “country”
+    resultado2: información del segundo registro de resultados FIFA que incluye
+    “date” y el “country”
     """
-    # TODO: Realizar el requerimiento 1
-    pass
+    date_format = "%Y-%m-%d"
+    date1 = datetime.datetime.strptime(resultado1['date'], date_format)
+    date2 = datetime.datetime.strptime(resultado2['date'], date_format)
+
+    if date1 != date2:
+        return date1 < date2
+    else:
+        # Si las fechas son iguales, ordenar por nombre de país
+        country1 = resultado1['home_team']
+        country2 = resultado2['home_team']
+        return country1 < country2
+
+def sortName(data,name_team, condition_team, number_matchs):
+    e =0
+    total_indices = []
+    if condition_team.lower() == "local":
+        f ="home_team"
+        indices, NameSort= searchname(data,name_team, condition_team, number_matchs,f)
+        total_indices = indices
+    
+    elif condition_team.lower() == "visitante":
+        f ="away_team"
+        indices, NameSort= searchname(data,name_team, condition_team, number_matchs,f)
+        total_indices = indices
+
+
+    else:
+        e =1
+        f ="home_team"
+        indices1, NameSort1= searchname(data,name_team, condition_team, number_matchs,f)
+        z ="away_team"
+        indices2, NameSort2= searchname(data,name_team, condition_team, number_matchs,z)      
+    if e==1:
+        total_teams = lt.newList('ARRAY_LIST')
+        answerSort = lt.newList('ARRAY_LIST')
+        for i in indices1:
+            element= lt.getElement(NameSort1,i+1)
+            lt.addFirst(total_teams,element)
+        for i in indices2:
+            element= lt.getElement(NameSort2,i+1)
+            lt.addFirst(total_teams,element)
+        answer= sa.sort(total_teams, compare_shootouts)
+        answerSort = getFirstNum(number_matchs,answer)
+        return answerSort
+
+    else:
+        total_teams = lt.newList('ARRAY_LIST')
+        answerSort = lt.newList('ARRAY_LIST')
+        for i in total_indices:
+            element= lt.getElement(NameSort,i+1)
+            lt.addFirst(total_teams,element)
+        answer= sa.sort(total_teams, compare_shootouts)
+        answerSort = getFirstNum(number_matchs,answer)
+        return answerSort
+ 
+
+def searchname(data,name_team, condition_team, number_matchs,f):
+        NameSort = lt.newList('ARRAY_LIST')
+        newList = []
+        if f=='home_team':
+            NameSort = sa.sort(data, compare_home)
+        else:
+            NameSort = sa.sort(data, compare_away)
+        for name in lt.iterator(NameSort):
+            
+            name_value = name[f].lower()
+            newList.append(name_value)
+        
+        i = 0
+        work = True
+        indices = []
+        izquierda = 0
+        derecha = len(newList) - 1
+        x = newList
+        while izquierda <= derecha and work:
+            medio = (izquierda + derecha) // 2  # Encontramos el índice medio de la lista
+            r = newList[medio]
+            z = name_team.lower()
+            if newList[medio] == name_team.lower():
+                indices.append(medio)  # Hemos encontrado el elemento y agregamos su índice a la lista
+                # Buscamos más ocurrencias hacia la izquierda
+                i = medio - 1
+                while i >= 0 and newList[i] == name_team.lower():
+                    indices.append(i)
+                    i -= 1
+                # Buscamos más ocurrencias hacia la derecha
+                j = medio + 1
+                while j < len(newList) and newList[j] == name_team.lower():
+                    indices.append(j)
+                    j += 1
+                work = False
+
+            elif newList[medio] < name_team.lower():
+                izquierda = medio + 1  # El elemento está en la mitad derecha
+            else:
+                derecha = medio - 1  # El elemento está en la mitad izquierda
+        return indices, NameSort
 
 #req 2
 def get_first_n_goals_by_player(catalog, player_name, n,  recursive=True):
     if recursive:
         return recurs_get_first_n_goals_by_player(catalog, player_name, n)
     else:
-        return  iter_get_first_n_goals_by_player(catalog, player_name, n)
+        return iter_get_first_n_goals_by_player(catalog, player_name, n)
 #Iterativa
 def iter_get_first_n_goals_by_player(data_structs, player_name, n):
     player_goals = lt.newList('ARRAY_LIST')
@@ -224,13 +349,6 @@ def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
             total_goals += 1
         
         return recursive_goals(goals, player_goals, total_goals, index + 1)
-
-    player_goals = lt.newList('ARRAY_LIST')
-    total_goals = 0
-    sa.sort(data_structs["goalscore"], cmp_partidos_by_fecha_y_pais)
-    goals = data_structs['goalscore']
-    
-    return recursive_goals(goals, player_goals, total_goals, 0)
 
 
 def get_total_goals_by_player(data_structs, player_name):
@@ -353,3 +471,12 @@ def listFusion(list1, list2):
     for element in lt.iterator(list2):
         lt.addLast(listfusion, element)
     return listfusion
+
+def getnameTeam(tableList,name):
+    nameTeam = lt.newList('ARRAY_LIST')
+    x =lt.compareElements(tableList, name, element)
+    for element in lt.iterator(tableList['home_team']):
+        if name == element:
+            nameTeam.addLast(element)
+
+
