@@ -120,10 +120,10 @@ def req_1(control):
     pass
 
 #req 2
-def get_first_n_goals_by_player(control, player_name, n):
+def get_first_n_goals_by_player(control, player_name, n, recursive=True):
     "Retorna los goles totales de un jugador, y los últimos n goles"
     data_structs = control['model']
-    total_goals, player_goals = model.get_first_n_goals_by_player(data_structs, player_name, n)
+    total_goals, player_goals = model.get_first_n_goals_by_player(data_structs, player_name, n, recursive)
     return total_goals, player_goals
 
 

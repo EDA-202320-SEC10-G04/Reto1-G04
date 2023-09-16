@@ -194,27 +194,44 @@ def req_1(data_structs):
     pass
 
 #req 2
-def get_first_n_goals_by_player(data_structs, player_name, n):
+def get_first_n_goals_by_player(catalog, player_name, n,  recursive=True):
+    if recursive:
+        return recurs_get_first_n_goals_by_player(catalog, player_name, n)
+    else:
+        return  iter_get_first_n_goals_by_player(catalog, player_name, n)
+#Iterativa
+def iter_get_first_n_goals_by_player(data_structs, player_name, n):
     player_goals = lt.newList('ARRAY_LIST')
     total_goals = 0
     sa.sort(data_structs["goalscore"], cmp_partidos_by_fecha_y_pais)
     # Recorremos la lista de goles y seleccionamos los que coincidan con el jugador
-
     for goal in lt.iterator(data_structs['goalscore']):
         if goal['scorer'].lower() == player_name.lower():
             lt.addLast(player_goals, goal)
             total_goals += 1
             if total_goals == n:
                 break
-
-
     return total_goals, player_goals
+#Recursiva
+def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
+    def recursive_goals(goals, player_goals, total_goals, index):
+        if index >= lt.size(goals) or total_goals >= n:
+            return total_goals, player_goals
+        
+        goal = lt.getElement(goals, index)
+        if goal['scorer'].lower() == player_name.lower():
+            lt.addLast(player_goals, goal)
+            total_goals += 1
+        
+        return recursive_goals(goals, player_goals, total_goals, index + 1)
 
-
-
-
-
+    player_goals = lt.newList('ARRAY_LIST')
+    total_goals = 0
+    sa.sort(data_structs["goalscore"], cmp_partidos_by_fecha_y_pais)
+    goals = data_structs['goalscore']
     
+    return recursive_goals(goals, player_goals, total_goals, 0)
+
 
 def get_total_goals_by_player(data_structs, player_name):
     

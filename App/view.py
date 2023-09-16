@@ -30,6 +30,7 @@ assert cf
 from tabulate import tabulate
 import traceback
 from prettytable import PrettyTable, ALL
+import threading
 
 
 default_limit = 1000
@@ -62,6 +63,7 @@ def print_menu():
     print("7- Clasificar los mejores equipos de un torneo en un periodo")
     print("8- Clasificar los mejores anotadores en partidos oficiales en un periodo")
     print("9- Seleccionar el tipo de lista y el tipo de ordenamiento")
+    print("10- Cambiar tipo de algoritmos (recursivos o iterativos)")
     print("0- Salir")
 #pretty table
 def printSimpleTable(tableList, keys):
@@ -184,15 +186,19 @@ def print_req_8(control):
 
 
 # Se crea el controlador asociado a la vista
-control = new_controller()
 
-# main del reto
-if __name__ == "__main__":
+bool_lt_opt = ("s", "S", "1", True, "true", "True", "si", "Si", "SI")
+
+def menu_cycle():
+
     """
     Menu principal
     """
     working = True
+    # configurando si usa algoritmos recursivos
+    rec = True
     #ciclo del menu
+    control = new_controller()
     while working:
         print_menu()
         inputs = input('Seleccione una opción para continuar\n')
@@ -227,7 +233,7 @@ if __name__ == "__main__":
         elif int(inputs) == 3:
             player_name = input("Ingrese el nombre del jugador: ")
             n = int(input("Ingrese el número de goles a mostrar: "))
-            total_goals, player_goals = controller.get_first_n_goals_by_player(control, player_name, n)
+            total_goals, player_goals = controller.get_first_n_goals_by_player(control, player_name, n, recursive=rec)
             print_first_n_goals_by_player(total_goals, player_goals)
 
         elif int(inputs) == 4:
@@ -273,6 +279,14 @@ if __name__ == "__main__":
             printSimpleTable(sixResults, ['date','home_team','away_team','home_score','away_score','country','city','tournament'])
            # -----------GOAL SCORES-----------------------------
 
+        elif int(inputs) == 10:
+            # TODO modificar opcion 10 del menu en el lab 5 (parte 2)
+            # configurar si usa algoritmos recursivos
+            rec = input("Usar algoritmos recursivos? (S/N): ")
+            if rec in bool_lt_opt:
+                rec = True
+            else:
+                rec = False
 
 
 
@@ -283,3 +297,9 @@ if __name__ == "__main__":
             print("Opción errónea, vuelva a elegir.\n")
     sys.exit(0)
 
+if __name__ == "__main__":
+
+    threading.stack_size(67108864*2) # 128MB stack
+    sys.setrecursionlimit(default_limit*1000000)
+    thread = threading.Thread(target=menu_cycle)
+    thread.start()
