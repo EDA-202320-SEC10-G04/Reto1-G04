@@ -83,7 +83,7 @@ def add_shootouts1(data_structs, data):
 # ...
 
 # Funciones de comparación
-def compare_goalscore(data1, data2):
+def cmp_date_and_minute(data1, data2):
     # Ordenar primero por fecha
     date1 = datetime.datetime.strptime(data1['date'], '%Y-%m-%d')
     date2 = datetime.datetime.strptime(data2['date'], '%Y-%m-%d')
@@ -102,19 +102,9 @@ def compare_goalscore(data1, data2):
         if minute1 and minute2:
             if float(minute1) < float(minute2):
                 return False
-            elif float(minute1) > float(minute2):
-                return True
             else:
-                
-                # Si el minuto es igual, comparar los nombres de los jugadores sin importar mayúsculas y minúsculas
-                player1 = data1['scorer'].lower()
-                player2 = data2['scorer'].lower()
-                if player1 > player2:
-                    return True
-                elif player1 < player2 :
-                    return False
-                else:
-                    return False
+                return True
+
  
 
 
@@ -165,7 +155,6 @@ def compare_shootouts(data1, data2):
 
 
 
-        # En model.py
 def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
     """
     Devuelve verdadero (True) si la fecha del resultado1 es menor que en el resultado2,
@@ -208,7 +197,7 @@ def compare_away(data1, data2):
 #req1
 
 
-        # En model.py
+
 def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
     """
     Devuelve verdadero (True) si la fecha del resultado1 es menor que en el resultado2,
@@ -361,14 +350,9 @@ def get_total_goals_by_player(data_structs, player_name):
             lt.addLast(player_goals, goal)
     se.sort(player_goals, cmp_partidos_by_fecha_y_pais)
     return lt.size(player_goals)
-
+#Req 3
 def req_3(data_structs):
-    """
-    Función que soluciona el requerimiento 3
-    """
-    # TODO: Realizar el requerimiento 3
     pass
-
 
 def req_4(data_structs):
     """
@@ -377,13 +361,53 @@ def req_4(data_structs):
     # TODO: Realizar el requerimiento 4
     pass
 
+#Req 5
+def consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin):
+    """
+    Consulta las anotaciones de un jugador en un período de tiempo.
+    Devuelve una lista de goles del jugador en ese período.
+    """
+    player_goals = lt.newList('ARRAY_LIST')
 
-def req_5(data_structs):
+    # Ordena la lista de goles por fecha y minuto
+    sa.sort(data_structs['goalscore'], cmp_date_and_minute)
+
+    total_goals = 0
+    total_tournaments = set()
+    penalties = 0
+    own_goals = 0
+    fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d')
+    fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d')
+    for goal in lt.iterator(data_structs['goalscore']):
+        goal_date = datetime.datetime.strptime(goal['date'], '%Y-%m-%d')
+        if fecha_inicio <= goal_date <= fecha_fin and goal['scorer'].lower() == jugador_nombre.lower():
+            total_goals += 1
+            # Obtener el nombre del torneo desde la lista de resultados
+            tournament = buscar_torneo(data_structs['results'], goal['date'], goal['home_team'], goal['away_team'])
+            if tournament:
+                total_tournaments.add(tournament)
+            if goal['penalty'] == 'True':
+                penalties += 1
+            if goal['own_goal'] == 'True':
+                own_goals += 1
+
+            # Incluir el nombre del torneo en el gol
+            goal['tournament'] = tournament
+            lt.addLast(player_goals, goal)
+
+
+
+    return total_goals, len(total_tournaments), penalties, own_goals, player_goals
+
+def buscar_torneo(results, goal_date, home_team, away_team):
     """
-    Función que soluciona el requerimiento 5
+    Busca el nombre del torneo en la lista de resultados según la fecha y los equipos.
     """
-    # TODO: Realizar el requerimiento 5
-    pass
+    for result in lt.iterator(results):
+        result_date = datetime.datetime.strptime(result['date'], '%Y-%m-%d')
+        if result_date == datetime.datetime.strptime(goal_date, '%Y-%m-%d') and result['home_team'] == home_team and result['away_team'] == away_team:
+            return result['tournament']
+    return 'Desconocido'
 
 
 def req_6(data_structs):

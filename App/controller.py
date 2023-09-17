@@ -143,12 +143,13 @@ def req_4(control):
     pass
 
 
-def req_5(control):
-    """
-    Retorna el resultado del requerimiento 5
-    """
-    # TODO: Modificar el requerimiento 5
-    pass
+#Requerimiento 5
+
+def consultar_anotaciones_jugador_periodo(control, jugador_nombre, fecha_inicio, fecha_fin):
+    
+    data_structs = control['model']
+    total_goals, total_tournaments, penalties, own_goals, player_goals = model.consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin)
+    return total_goals, total_tournaments, penalties, own_goals, player_goals
 
 def req_6(control):
     """

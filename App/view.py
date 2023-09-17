@@ -152,12 +152,34 @@ def print_req_4(control):
     pass
 
 
-def print_req_5(control):
+def print_annotations_over_a_period_of_time(total_goals, total_tournaments, penalties, own_goals, player_goals):
+    """_summary_
+
+    Args:
+        total_goals (_type_): _description_
+        total_tournaments (_type_): _description_
+        penalties (_type_): _description_
+        own_goals (_type_): _description_
+        player_goals (_type_): _description_
     """
-        Función que imprime la solución del Requerimiento 5 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 5
-    pass
+    print(f"\n Total de goles anotados por el jugador: {total_goals}")
+    print(f"Total de torneos: {total_tournaments}")
+    print(f"Total de penalties: {penalties}")   
+    print(f"Total de autogoles: {own_goals}")   
+    print("Detalles de los goles:")
+    
+    if total_goals > 0:
+        keys = ['date', 'home_team', 'away_team', 'scorer', 'minute', 'penalty', 'own_goal', 'tournament']
+
+        
+
+        if total_goals > 6:
+            player_goals = controller.sixdata(player_goals)
+         
+        printSimpleTable(player_goals,keys)
+         
+    else:
+        print("No se encontraron goles para el jugador especificado.")
 
 
 def print_req_6(control):
@@ -243,10 +265,14 @@ def menu_cycle():
             print_req_3(control)
 
         elif int(inputs) == 5:
-            print_req_4(control)
+            pass
 
         elif int(inputs) == 6:
-            print_req_5(control)
+            player_name = input("Ingrese el nombre del jugador: ")
+            fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD): ")
+            fecha_fin = input("Ingrese la fecha de fin (YYYY-MM-DD): ")
+            total_goals, total_tournaments, penalties, own_goals, player_goals = controller.consultar_anotaciones_jugador_periodo(control, player_name, fecha_inicio, fecha_fin)
+            print_annotations_over_a_period_of_time(total_goals, total_tournaments, penalties, own_goals, player_goals)
 
         elif int(inputs) == 7:
             print_req_6(control)
