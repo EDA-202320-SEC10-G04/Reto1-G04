@@ -271,7 +271,10 @@ def menu_cycle():
             player_name = input("Ingrese el nombre del jugador: ")
             fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD): ")
             fecha_fin = input("Ingrese la fecha de fin (YYYY-MM-DD): ")
-            total_goals, total_tournaments, penalties, own_goals, player_goals = controller.consultar_anotaciones_jugador_periodo(control, player_name, fecha_inicio, fecha_fin)
+            total_goals, total_tournaments, penalties, own_goals, player_goals = controller.consultar_anotaciones_jugador_periodo(
+            control, player_name, fecha_inicio, fecha_fin, recursive=rec)
+
+
             print_annotations_over_a_period_of_time(total_goals, total_tournaments, penalties, own_goals, player_goals)
 
         elif int(inputs) == 7:

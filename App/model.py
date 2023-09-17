@@ -362,7 +362,14 @@ def req_4(data_structs):
     pass
 
 #Req 5
-def consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin):
+def consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin, recursive = True):
+    if recursive:
+        return rec_consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin)
+    else:
+        return iter_consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin)
+    
+#Iterativa
+def iter_consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin):
     """
     Consulta las anotaciones de un jugador en un período de tiempo.
     Devuelve una lista de goles del jugador en ese período.
@@ -395,10 +402,46 @@ def consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_in
             goal['tournament'] = tournament
             lt.addLast(player_goals, goal)
 
-
-
     return total_goals, len(total_tournaments), penalties, own_goals, player_goals
 
+
+#Recursiva 
+def rec_consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin):
+    def recursive_goals(goals, player_goals, total_goals, total_tournaments, penalties, own_goals, index):
+        if index >= lt.size(goals):
+            return total_goals, len(total_tournaments), penalties, own_goals, player_goals
+        
+        goal = lt.getElement(goals, index)
+        goal_date = datetime.datetime.strptime(goal['date'], '%Y-%m-%d')
+
+        if fecha_inicio <= goal_date <= fecha_fin and goal['scorer'].lower() == jugador_nombre.lower():
+            total_goals += 1
+            # Obtener el nombre del torneo desde la lista de resultados
+            tournament = buscar_torneo(data_structs['results'], goal['date'], goal['home_team'], goal['away_team'])
+            if tournament:
+                total_tournaments.add(tournament)
+            if goal['penalty'] == 'True':
+                penalties += 1
+            if goal['own_goal'] == 'True':
+                own_goals += 1
+
+            # Incluir el nombre del torneo en el gol
+            goal['tournament'] = tournament
+            lt.addLast(player_goals, goal)
+        
+        return recursive_goals(goals, player_goals, total_goals, total_tournaments, penalties, own_goals, index + 1)
+
+    player_goals = lt.newList('ARRAY_LIST')
+    total_goals = 0
+    total_tournaments = set()
+    penalties = 0
+    own_goals = 0
+    fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d')
+    fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d')
+    sa.sort(data_structs["goalscore"], cmp_date_and_minute)
+    goals = data_structs['goalscore']
+
+    return recursive_goals(goals, player_goals, total_goals, total_tournaments, penalties, own_goals, 0)
 def buscar_torneo(results, goal_date, home_team, away_team):
     """
     Busca el nombre del torneo en la lista de resultados según la fecha y los equipos.
@@ -408,8 +451,6 @@ def buscar_torneo(results, goal_date, home_team, away_team):
         if result_date == datetime.datetime.strptime(goal_date, '%Y-%m-%d') and result['home_team'] == home_team and result['away_team'] == away_team:
             return result['tournament']
     return 'Desconocido'
-
-
 def req_6(data_structs):
     """
     Función que soluciona el requerimiento 6
