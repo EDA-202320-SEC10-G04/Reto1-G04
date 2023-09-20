@@ -118,6 +118,7 @@ def print_first_n_goals_by_player(total_goals, player_goals):
         total_goals (int): Total de goles
         player_goals (int): Total de goles por jugador
     """
+    
     print(f"Total de goles anotados por el jugador: {total_goals}\n")
     print("Detalles de los goles:")
     
@@ -153,14 +154,14 @@ def print_req_4(control):
 
 
 def print_annotations_over_a_period_of_time(total_goals, total_tournaments, penalties, own_goals, player_goals):
-    """_summary_
+    """ Función que imprime las anotaciones, en un periodo de tiempo específico
 
     Args:
-        total_goals (_type_): _description_
-        total_tournaments (_type_): _description_
-        penalties (_type_): _description_
-        own_goals (_type_): _description_
-        player_goals (_type_): _description_
+        total_goals (int): Número total de goles 
+        total_tournaments (int): Número de torneos en los que se hicieron los goles
+        penalties (int): Número de goles que fueron hechos en penalties
+        own_goals (int): Número de goles que fueron autogol
+        player_goals (list): Lista de los goles del jugador.
     """
     print(f"\n Total de goles anotados por el jugador: {total_goals}")
     print(f"Total de torneos: {total_tournaments}")
@@ -209,6 +210,7 @@ def print_req_8(control):
 # Se crea el controlador asociado a la vista
 
 bool_lt_opt = ("s", "S", "1", True, "true", "True", "si", "Si", "SI")
+control = new_controller()
 
 def menu_cycle():
 
@@ -243,7 +245,7 @@ def menu_cycle():
             sixgoals = controller.sixdata(control['model']['goalscore'])
             printSimpleTable(sixgoals,['date','home_team','away_team','scorer','team','minute','penalty','own_goal'])
             # ------------------- SHOOTOUS----------------------------------------------------------------
-            print("----------------------SHOOTOUS----------------------------------------------------------------")
+            print("----------------------SHOOTOUS-----------------------------")
             sixshoots = controller.sixdata(control['model']['shootouts'])
             printSimpleTable(sixshoots,['date','home_team','away_team','winner'])
 
@@ -256,10 +258,17 @@ def menu_cycle():
             printSimpleTable(total_matchs,['date','home_team','away_team','country','city','home_score','away_score'])
 
         elif int(inputs) == 3:
+            print("========================== Req No. 2 Inputs ===============")
             player_name = input("Ingrese el nombre del jugador: ")
             n = int(input("Ingrese el número de goles a mostrar: "))
-            total_goals, player_goals = controller.get_first_n_goals_by_player(control, player_name, n, recursive=rec)
+            print("========================= Req No.2 Results ==================")
+            time, total_goals, player_goals = controller.get_first_n_goals_by_player(control, player_name, n, recursive=rec)
+
+            print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
             print_first_n_goals_by_player(total_goals, player_goals)
+
+
+                
 
         elif int(inputs) == 4:
             print_req_3(control)
@@ -268,9 +277,12 @@ def menu_cycle():
             pass
 
         elif int(inputs) == 6:
+            print("========================== Req No. 5 Inputs ===============")
             player_name = input("Ingrese el nombre del jugador: ")
             fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD): ")
             fecha_fin = input("Ingrese la fecha de fin (YYYY-MM-DD): ")
+            
+            print("========================= Req No.2 Results ==================")
             total_goals, total_tournaments, penalties, own_goals, player_goals = controller.consultar_anotaciones_jugador_periodo(
             control, player_name, fecha_inicio, fecha_fin, recursive=rec)
 

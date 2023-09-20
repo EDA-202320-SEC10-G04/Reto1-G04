@@ -108,7 +108,7 @@ def cmp_date_and_minute(data1, data2):
  
 
 
-def compare_results(data1, data2):
+def cmp_fecha_país_mayor_menor(data1, data2):
     # Ordenar primero por fecha, luego por puntaje local y puntaje visitante
     date1 = datetime.datetime.strptime(data1['date'], '%Y-%m-%d')
     date2 = datetime.datetime.strptime(data2['date'], '%Y-%m-%d')
@@ -118,17 +118,12 @@ def compare_results(data1, data2):
     elif date1 > date2:
         return True
     else:
-        if float(data1['home_score']) < float((data2['home_score'])):
+        if (data1['home_team']) < ((data2['home_team'])):
             return False
-        elif float(data1['home_score']) > float(data2['home_score']):
+        elif (data1['home_team']) > (data2['home_team']):
             return True
         else:
-            if float(data1['away_score']) < float(data2['away_score']):
-                return False
-            elif float(data1['away_score']) > float(data2['away_score']):
-                return True
-            else:
-                return False
+            return False
 
 def compare_shootouts(data1, data2):
     # Ordenar primero por fecha
@@ -196,30 +191,6 @@ def compare_away(data1, data2):
         return False
 #req1
 
-
-
-def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
-    """
-    Devuelve verdadero (True) si la fecha del resultado1 es menor que en el resultado2,
-    en caso de que sean iguales tenga el nombre de la ciudad en que se disputó el partido,
-    de lo contrario devuelve falso (False).
-    Args:
-    resultado1: información del primer registro de resultados FIFA que incluye
-    “date” y el “country”
-    resultado2: información del segundo registro de resultados FIFA que incluye
-    “date” y el “country”
-    """
-    date_format = "%Y-%m-%d"
-    date1 = datetime.datetime.strptime(resultado1['date'], date_format)
-    date2 = datetime.datetime.strptime(resultado2['date'], date_format)
-
-    if date1 != date2:
-        return date1 < date2
-    else:
-        # Si las fechas son iguales, ordenar por nombre de país
-        country1 = resultado1['home_team']
-        country2 = resultado2['home_team']
-        return country1 < country2
 
 def sortName(data,name_team, condition_team, number_matchs):
     e =0
@@ -317,7 +288,7 @@ def get_first_n_goals_by_player(catalog, player_name, n,  recursive=True):
 def iter_get_first_n_goals_by_player(data_structs, player_name, n):
     player_goals = lt.newList('ARRAY_LIST')
     total_goals = 0
-    sa.sort(data_structs["goalscore"], cmp_partidos_by_fecha_y_pais)
+    sa.sort(data_structs["goalscore"], cmp_fecha_país_mayor_menor)
     # Recorremos la lista de goles y seleccionamos los que coincidan con el jugador
     for goal in lt.iterator(data_structs['goalscore']):
         if goal['scorer'].lower() == player_name.lower():
@@ -338,18 +309,13 @@ def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
             total_goals += 1
         
         return recursive_goals(goals, player_goals, total_goals, index + 1)
-
-
-def get_total_goals_by_player(data_structs, player_name):
-    
-    goals = data_structs['goalscore']
     player_goals = lt.newList('ARRAY_LIST')
-    
-    for goal in lt.iterator(goals):
-        if goal['scorer'].lower() == player_name.lower():
-            lt.addLast(player_goals, goal)
-    se.sort(player_goals, cmp_partidos_by_fecha_y_pais)
-    return lt.size(player_goals)
+    total_goals = 0
+    sa.sort(data_structs["goalscore"], cmp_fecha_país_mayor_menor )
+    goals = data_structs['goalscore']
+
+    return recursive_goals(goals, player_goals, total_goals, 0)
+
 #Req 3
 def req_3(data_structs):
     pass
@@ -451,13 +417,39 @@ def buscar_torneo(results, goal_date, home_team, away_team):
         if result_date == datetime.datetime.strptime(goal_date, '%Y-%m-%d') and result['home_team'] == home_team and result['away_team'] == away_team:
             return result['tournament']
     return 'Desconocido'
-def req_6(data_structs):
-    """
-    Función que soluciona el requerimiento 6
-    """
-    # TODO: Realizar el requerimiento 6
-    pass
+#Req 6
+"""
+def Clasifica_mejores_equipos_de_un_torneo(data_structs, nombre_torneo, fecha_inicio, fecha_fin):
+    player_goals = lt.newList('ARRAY_LIST')
 
+    # Ordena la lista de goles por fecha y minuto
+    sa.sort(data_structs['goalscore'], cmp_date_and_minute)
+
+    total_matches = 0
+    total_equipos = set()
+    penalties = 0
+    own_goals = 0
+    fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d')
+    fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d')
+    for goal in lt.iterator(data_structs['goalscore']):
+        goal_date = datetime.datetime.strptime(goal['results'], '%Y-%m-%d')
+        if fecha_inicio <= goal_date <= fecha_fin and goal['tournament'].lower() == nombre_torneo.lower():
+            total_matches += 1
+            # Obtener el nombre del torneo desde la lista de resultados
+            tournament = buscar_torneo(data_structs['results'], goal['date'], goal['home_team'], goal['away_team'])
+            if tournament:
+                total_tournaments.add(tournament)
+            if goal['penalty'] == 'True':
+                penalties += 1
+            if goal['own_goal'] == 'True':
+                own_goals += 1
+
+            # Incluir el nombre del torneo en el gol
+            goal['tournament'] = tournament
+            lt.addLast(player_goals, goal)
+
+    return total_goals, len(total_tournaments), penalties, own_goals, player_goals
+"""
 
 def req_7(data_structs):
     """
@@ -507,8 +499,6 @@ def sort(data, ordenamiento):
        
 
 # Funciones de ordenamiento
-
-
 
 def getFirstNum(number, tablelist):
     if number <= lt.size(tablelist):

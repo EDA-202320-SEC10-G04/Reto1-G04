@@ -33,8 +33,8 @@ This repository is part of the data structure and algorithms (#EDA) teaching fra
 The students edit this section to add their names, Uniandes emails, and specify which project functionality of the project they will implement.
 
 1. **Req No 3**, Harold Esteban Piñeros Monroy <h.pineros@uniandes.edu.co>,202316402
-2. **Req No 5**,Carlos Alberto Poveda Riaño <ca.povedar1@uniandes.edu.co>,202315546
-3. **Req No 4**,Luis Sebastián Contreras Diaz <ls.contreras@uniandes.edu.co>,202311819
+2. **Req No 4**,Carlos Alberto Poveda Riaño <ca.povedar1@uniandes.edu.co>,202315546
+3. **Req No 5**,Luis Sebastián Contreras Diaz <ls.contreras@uniandes.edu.co>,202311819
 [Back to top](#challenge-template)
 
 <!-- ABOUT THE PROJECT -->

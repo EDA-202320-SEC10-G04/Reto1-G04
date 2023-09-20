@@ -120,8 +120,12 @@ def sortName(data, name_team, condition_team, number_matchs):
 def get_first_n_goals_by_player(control, player_name, n, recursive=True):
     "Retorna los goles totales de un jugador, y los últimos n goles"
     data_structs = control['model']
+    start_time = get_time()
     total_goals, player_goals = model.get_first_n_goals_by_player(data_structs, player_name, n, recursive)
-    return total_goals, player_goals
+    end_time = get_time()
+    
+    deltatime = delta_time(start_time, end_time)
+    return deltatime, total_goals, player_goals
 
 
 
