@@ -320,20 +320,34 @@ def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
 def req_3(data_structs):
     pass
 #Req 4
-def queryMatchsbyPeriod(name_tournament, start_date, end_date,data1,data2):
+def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results):
     """
     Función que soluciona el requerimiento 4
     """
-    
-    array1 = sortbyDates(data1)
-    array2 = sortbyDates(data2)
-    pass
-def sortbyDates(data):
-    array = sa.sort(data,cmp_fecha_país_mayor_menor)
-    return array
+    r = lt.newList('ARRAY_LIST')
+    Goals = filterbyPeriod(goalscore,start_date, end_date)
+    Results = filterbyPeriod(results,start_date, end_date)
+    Tmatchs = findMatch(name_tournament, Results)
+    z =0
+    for i in lt.iterator(Tmatch):
+        z=lt.isPresent(Goals,i["home_team"])
+        if z != 0:
+            lt.addLast(r, lt.getElement(Goals,z))
 
-def filtertoPeriod(data):
-    return binary_searchbyPeriod(data, high, low)
+    return r
+
+    pass
+
+def filterbyPeriod(data, stardate, end_date):
+    newArray = lt.newList('ARRAY_LIST')
+    array = sa.sort(data,cmp_fecha_país_mayor_menor)
+    low = searchMin(array,end_date, 'date')
+    high = binary_searchMax(array, stardate, 'date')
+    while low <= high:
+        lt.addlast(newArray, lt.getElement(array,low))
+        low+=1
+        
+    return newArray
 
 
 
@@ -343,22 +357,27 @@ def findMatch(name_tournament, data):
         if j['tournament'] == name_tournament:
             new_array.append(j)
     return new_array
+
 # busqueda binaria 2.0
-def binary_searchMax(data, high, low, goal,key ):
-    low, high = 0 , lt.size(data)-1
+
+def binary_searchMax(data, goal,key ):
+    low, high = 0 , lt.size(data)
 
     while low<= high:
         mid = (low + high) // 2
-        if lt.getElement(low+high)[key] ==goal:
+        if lt.getElement(data,mid)[key] ==goal:
             low = mid+1
-        elif lt.getElement(low+high) >goal:
+        elif lt.getElement(data,mid)[key] >goal:
             low = mid+1
 
-   
-    return  newArray
-def binary_searchbyMin(data, high, low, goal, key):
+    return  low
 
-    pass
+
+def searchMin(data, goal, key):
+    for element in lt.iterator(data):
+        if element[key] == goal:
+            return element
+
 
 
 

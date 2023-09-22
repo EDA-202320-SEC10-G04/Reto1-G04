@@ -139,12 +139,12 @@ def req_3(control):
     pass
 
 #req 4
-def queryMatchsbyPeriod(name_tournament, start_date, end_date, control, data1, data2):
+def queryMatchsbyPeriod(name_tournament, start_date, end_date, goalscore, results):
     """
     Retorna el resultado del requerimiento 4
     """
     # TODO: Modificar el requerimiento 4
-    matchs = model.queryMatchsbyPeriod(name_tournament, start_date, end_date,control,data1,data2)
+    matchs = model.queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results)
     return matchs
 
 

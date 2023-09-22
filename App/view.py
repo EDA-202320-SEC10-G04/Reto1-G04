@@ -277,7 +277,7 @@ def menu_cycle():
             name_tournament = input(" Ingrese el nombre del Torneo: ")
             start_date = input("Ingrese la fecha de inicio del periodo a consultar (YYYY-MM-DD): ")
             end_date = input("Ingrese la fecha de final del periodo a consultar (YYYY-MM-DD): ")
-            matchs = controller.queryMatchsbyPeriod(name_tournament, start_date, end_date ,control['model']['goalscores'], control['model']['results'])
+            matchs = controller.queryMatch1sbyPeriod(name_tournament, start_date, end_date ,control['model']['goalscore'], control['model']['results'])
             printSimpleTable(matchs,['date'],['country'],['city'],['home_team'],['away_team'],['home_score'],['away_score'])
             print_req_3(control)
 
