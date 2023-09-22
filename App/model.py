@@ -319,13 +319,50 @@ def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
 #Req 3
 def req_3(data_structs):
     pass
-
-def req_4(data_structs):
+#Req 4
+def queryMatchsbyPeriod(name_tournament, start_date, end_date,data1,data2):
     """
     Función que soluciona el requerimiento 4
     """
-    # TODO: Realizar el requerimiento 4
+    
+    array1 = sortbyDates(data1)
+    array2 = sortbyDates(data2)
     pass
+def sortbyDates(data):
+    array = sa.sort(data,cmp_fecha_país_mayor_menor)
+    return array
+
+def filtertoPeriod(data):
+    return binary_searchbyPeriod(data, high, low)
+
+
+
+def findMatch(name_tournament, data):
+    new_array = lt.newList('ARRAY_LIST')
+    for j in iterator( data):
+        if j['tournament'] == name_tournament:
+            new_array.append(j)
+    return new_array
+# busqueda binaria 2.0
+def binary_searchMax(data, high, low, goal,key ):
+    low, high = 0 , lt.size(data)-1
+
+    while low<= high:
+        mid = (low + high) // 2
+        if lt.getElement(low+high)[key] ==goal:
+            low = mid+1
+        elif lt.getElement(low+high) >goal:
+            low = mid+1
+
+   
+    return  newArray
+def binary_searchbyMin(data, high, low, goal, key):
+
+    pass
+
+
+
+
 
 #Req 5
 def consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin, recursive = True):

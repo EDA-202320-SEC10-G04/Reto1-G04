@@ -271,6 +271,14 @@ def menu_cycle():
                 
 
         elif int(inputs) == 4:
+            """PConsultar los partidos relacionados
+             con un torneo durante un
+            periodo especifico."""
+            name_tournament = input(" Ingrese el nombre del Torneo: ")
+            start_date = input("Ingrese la fecha de inicio del periodo a consultar (YYYY-MM-DD): ")
+            end_date = input("Ingrese la fecha de final del periodo a consultar (YYYY-MM-DD): ")
+            matchs = controller.queryMatchsbyPeriod(name_tournament, start_date, end_date ,control['model']['goalscores'], control['model']['results'])
+            printSimpleTable(matchs,['date'],['country'],['city'],['home_team'],['away_team'],['home_score'],['away_score'])
             print_req_3(control)
 
         elif int(inputs) == 5:
