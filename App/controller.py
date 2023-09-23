@@ -152,15 +152,15 @@ def req_4(control):
 def consultar_anotaciones_jugador_periodo(control, jugador_nombre, fecha_inicio, fecha_fin, recursive = True):
     
     data_structs = control['model']
-    total_goals, total_tournaments, penalties, own_goals, player_goals = model.consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin, recursive)
+    total_goals, total_tournaments, penalties, own_goals, player_goals = model.consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, 
+                                                                                                                     fecha_inicio, fecha_fin, recursive)
     return total_goals, total_tournaments, penalties, own_goals, player_goals
 
-def req_6(control):
-    """
-    Retorna el resultado del requerimiento 6
-    """
-    # TODO: Modificar el requerimiento 6
-    pass
+def req_6(control, N, torneo_nombre, fecha_inicio, fecha_fin):
+    data_structs = control['model']
+    total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados = model.consultar_mejores_equipos(data_structs, N, torneo_nombre, 
+                                                                                                                                               fecha_inicio, fecha_fin)
+    return total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados
 
 
 def req_7(control):

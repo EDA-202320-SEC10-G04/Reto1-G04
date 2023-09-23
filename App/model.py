@@ -189,6 +189,8 @@ def compare_away(data1, data2):
         return True
     elif team1 > team2:
         return False
+    
+
 #req1
 
 
@@ -417,39 +419,197 @@ def buscar_torneo(results, goal_date, home_team, away_team):
         if result_date == datetime.datetime.strptime(goal_date, '%Y-%m-%d') and result['home_team'] == home_team and result['away_team'] == away_team:
             return result['tournament']
     return 'Desconocido'
+
 #Req 6
-"""
-def Clasifica_mejores_equipos_de_un_torneo(data_structs, nombre_torneo, fecha_inicio, fecha_fin):
-    player_goals = lt.newList('ARRAY_LIST')
 
-    # Ordena la lista de goles por fecha y minuto
-    sa.sort(data_structs['goalscore'], cmp_date_and_minute)
+def cmp_total_p(equipo1, equipo2):
+    """
+    Compara dos equipos por su criterio compuesto de estadísticas.
+    """
+    if equipo1['total_puntos'] != equipo2['total_puntos']:
+        return equipo1['total_puntos'] - equipo2['total_puntos']
+    elif equipo1['diferencia_goles'] != equipo2['diferencia_goles']:
+        return equipo1['diferencia_goles'] - equipo2['diferencia_goles']
+    else:
+        return equipo1['puntos_penal'] - equipo2['puntos_penal']
 
-    total_matches = 0
-    total_equipos = set()
-    penalties = 0
-    own_goals = 0
+def consultar_mejores_equipos(data_structs, N, torneo_nombre, fecha_inicio, fecha_fin):
+    # Filtrar los datos por torneo y período de tiempo
+    tournament_results = filtrar_por_torneo(data_structs['results'], torneo_nombre)
+    filtered_results = filtrar_por_periodo(tournament_results, fecha_inicio, fecha_fin)
+    
+    # Crear un diccionario para almacenar las estadísticas de cada equipo
+    team_stats = {}
+    
+    for result in lt.iterator(filtered_results):
+        home_team = result['home_team']
+        away_team = result['away_team']
+        home_score = float(result['home_score'])
+        away_score = float(result['away_score'])
+        
+        # Actualizar estadísticas de los equipos
+        actualizar_estadisticas_equipo(team_stats, home_team, home_score, away_score)
+        actualizar_estadisticas_equipo(team_stats, away_team, away_score, home_score)
+    
+    # Ordenar equipos por criterio compuesto de estadísticas
+    list_team = lt.newList('ARRAY_LIST')
+    for a in team_stats.values():
+        lt.addLast(list_team, a)
+
+    sa.sort(list_team, cmp_total_p)
+    
+    # Obtener información adicional
+    total_equipos = len(team_stats)
+    total_encuentros = lt.size(filtered_results)
+    total_paises = obtener_total_paises(filtered_results)
+    total_ciudades = obtener_total_ciudades(filtered_results)
+    ciudad_mas_partidos = obtener_ciudad_mas_partidos(filtered_results)
+    
+    # Limitar la lista de equipos clasificados a los primeros N
+    equipos_clasificados = list_team[:N]
+    
+    return total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados
+
+def filtrar_por_torneo(results, torneo_nombre):
+    """
+    Filtra los resultados por nombre de torneo.
+    """
+    filtered_results = lt.newList('ARRAY_LIST')
+    for result in lt.iterator(results):
+        if torneo_nombre in result['tournament']:
+            lt.addLast(filtered_results, result)
+    return filtered_results
+
+def filtrar_por_periodo(results, fecha_inicio, fecha_fin):
+    """
+    Filtra los resultados por período de tiempo.
+    """
     fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d')
     fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d')
-    for goal in lt.iterator(data_structs['goalscore']):
-        goal_date = datetime.datetime.strptime(goal['results'], '%Y-%m-%d')
-        if fecha_inicio <= goal_date <= fecha_fin and goal['tournament'].lower() == nombre_torneo.lower():
-            total_matches += 1
-            # Obtener el nombre del torneo desde la lista de resultados
-            tournament = buscar_torneo(data_structs['results'], goal['date'], goal['home_team'], goal['away_team'])
-            if tournament:
-                total_tournaments.add(tournament)
-            if goal['penalty'] == 'True':
-                penalties += 1
-            if goal['own_goal'] == 'True':
-                own_goals += 1
+    filtered_results = lt.newList('ARRAY_LIST')
+    for result in lt.iterator(results):
+        result_date = datetime.datetime.strptime(result['date'], '%Y-%m-%d')
+        if fecha_inicio <= result_date <= fecha_fin:
+            lt.addLast(filtered_results, result)
+    return filtered_results
+def obtener_estadisticas_equipo(team_stats, team_name):
+    """
+    Obtiene las estadísticas de un equipo del diccionario de estadísticas de equipos.
+    Si no existe, crea un registro para el equipo.
+    """
+    if team_name in team_stats:
+        return team_stats[team_name]
+    
+    # Si el equipo no existe en el diccionario, lo crea.
+    new_team_stats = {
+        'nombre_equipo': team_name,
+        'total_puntos': 0,
+        'diferencia_goles': 0,
+        'partidos_disputados': 0,
+        'puntos_penal':0,
+        'puntos_autogol':0
+    }
+    team_stats[team_name] = new_team_stats
+    return new_team_stats
 
-            # Incluir el nombre del torneo en el gol
-            goal['tournament'] = tournament
-            lt.addLast(player_goals, goal)
 
-    return total_goals, len(total_tournaments), penalties, own_goals, player_goals
-"""
+def actualizar_estadisticas_equipo(team_stats, team_name, goles_a_favor, goles_en_contra):
+    """
+    Actualiza las estadísticas de un equipo en función de los goles a favor y en contra.
+    """
+    equipo = obtener_estadisticas_equipo(team_stats, team_name)
+    
+    # Realiza los cálculos de estadísticas
+    equipo['total_puntos'] += calcular_puntos(goles_a_favor, goles_en_contra)
+    equipo['diferencia_goles'] += goles_a_favor - goles_en_contra
+    equipo['partidos_disputados'] += 1
+    equipo['puntos_penal'] += calcular_puntos_penal(goles_a_favor)
+    equipo['puntos_autogol'] += calcular_puntos_autogol(goles_en_contra)
+    
+    
+    if goles_a_favor > goles_en_contra:
+        equipo['victorias'] += 1
+    elif goles_a_favor < goles_en_contra:
+        equipo['derrotas'] += 1
+    else:
+        equipo['empates'] += 1
+    
+    equipo['goles_obtenidos'] += goles_a_favor
+    equipo['goles_recibidos'] += goles_en_contra
+    
+    # Actualiza el máximo goleador
+    actualizar_max_goleador(equipo, goles_a_favor, goles_en_contra)
+
+def calcular_puntos(goles_a_favor, goles_en_contra):
+    """
+    Calcula los puntos de un partido según los goles a favor y en contra.
+    """
+    if goles_a_favor > goles_en_contra:
+        return 3
+    elif goles_a_favor == goles_en_contra:
+        return 1
+    else:
+        return 0
+
+def calcular_puntos_penal(goles_a_favor):
+    """
+    Calcula los puntos obtenidos desde la línea penal.
+    """
+    return goles_a_favor
+
+def calcular_puntos_autogol(goles_en_contra):
+    """
+    Calcula los puntos recibidos por autogol.
+    """
+    return goles_en_contra
+
+def actualizar_max_goleador(equipo, goles_a_favor, goles_en_contra):
+    """
+    Actualiza al máximo goleador del equipo.
+    """
+    if equipo['max_goleador'] is None or goles_a_favor > equipo['max_goleador']['goles_anotados']:
+        equipo['max_goleador'] = {
+            'goles_anotados': goles_a_favor,
+            'partidos_anotados': 1,
+            'promedio_tiempo': 0  # Debes calcular este valor
+        }
+
+def obtener_total_paises(results):
+    """
+    Obtiene el total de países involucrados en los resultados.
+    """
+    paises = set()  # Utilizamos un conjunto para evitar duplicados
+    for result in lt.iterator(results):
+        paises.add(result['country'])
+
+    return len(paises)
+
+def obtener_total_ciudades(results):
+    """
+    Obtiene el total de ciudades involucradas en los resultados.
+    """
+    ciudades = set()  # Utilizamos un conjunto para evitar duplicados
+    for result in lt.iterator(results):
+        ciudades.add(result['city'])
+
+    return len(ciudades)
+
+def obtener_ciudad_mas_partidos(results):
+    """
+    Obtiene la ciudad donde se han disputado más partidos.
+    """
+    ciudades_partidos = {}  # Diccionario para realizar un seguimiento de la cantidad de partidos por ciudad
+    for result in lt.iterator(results):
+        ciudad = result['city']
+        if ciudad in ciudades_partidos:
+            ciudades_partidos[ciudad] += 1
+        else:
+            ciudades_partidos[ciudad] = 1
+    
+    # Encuentra la ciudad con más partidos
+    ciudad_mas_partidos = max(ciudades_partidos, key=ciudades_partidos.get)
+    
+    return ciudad_mas_partidos
 
 def req_7(data_structs):
     """

@@ -163,7 +163,7 @@ def print_annotations_over_a_period_of_time(total_goals, total_tournaments, pena
         own_goals (int): Número de goles que fueron autogol
         player_goals (list): Lista de los goles del jugador.
     """
-    print(f"\n Total de goles anotados por el jugador: {total_goals}")
+    print(f"\nTotal de goles anotados por el jugador: {total_goals}")
     print(f"Total de torneos: {total_tournaments}")
     print(f"Total de penalties: {penalties}")   
     print(f"Total de autogoles: {own_goals}")   
@@ -183,12 +183,27 @@ def print_annotations_over_a_period_of_time(total_goals, total_tournaments, pena
         print("No se encontraron goles para el jugador especificado.")
 
 
-def print_req_6(control):
-    """
-        Función que imprime la solución del Requerimiento 6 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 6
-    pass
+def print_consultar_anotaciones_jugador_periodo(torneo_nombre, total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados):
+    print(f"\n{torneo_nombre} Total de equipos: {total_equipos}")
+    print(f"{torneo_nombre} Total de encuentros: {total_encuentros}")
+    print(f"{torneo_nombre} Total de paises: {total_paises}")
+    print(f"{torneo_nombre} Total de ciudades: {total_ciudades}") 
+    print(f"{torneo_nombre} Ciudad con más partidos: {ciudad_mas_partidos}") 
+    print("Detalles de los goles:")
+    
+    if total_encuentros > 0:
+        keys = ['date', 'home_team', 'away_team', 'scorer', 'minute', 'penalty', 'own_goal', 'tournament']
+        printSimpleTable(equipos_clasificados,keys)
+        
+
+        if total_encuentros > 6:
+            equipos_clasificados = controller.sixdata(equipos_clasificados)
+         
+        printSimpleTable(equipos_clasificados,keys)
+         
+    else:
+        print("No se encontraron goles para el jugador especificado.")
+
 
 
 def print_req_7(control):
@@ -290,7 +305,17 @@ def menu_cycle():
             print_annotations_over_a_period_of_time(total_goals, total_tournaments, penalties, own_goals, player_goals)
 
         elif int(inputs) == 7:
-            print_req_6(control)
+            print("========================== Req No. 5 Inputs ===============")
+            torneo_nombre = input("Ingrese el nombre del torneo: ")
+            N = int(input("Ingrese el número de partidos"))
+            fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD): ")
+            fecha_fin = input("Ingrese la fecha de fin (YYYY-MM-DD): ")
+            
+            print("========================= Req No.2 Results ==================")
+            total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados= controller.req_6(
+           control, N, torneo_nombre, fecha_inicio, fecha_fin)
+            print_consultar_anotaciones_jugador_periodo(torneo_nombre, total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados)
+
 
         elif int(inputs) == 8:
             print_req_7(control)
