@@ -36,6 +36,7 @@ from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
 assert cf
 import datetime 
+
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá
 dos listas, una para los videos, otra para las categorias de los mismos.
@@ -328,9 +329,9 @@ def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results
     Goals = filterbyPeriod(goalscore,start_date, end_date)
     Results = filterbyPeriod(results,start_date, end_date)
     Tmatchs = findMatch(name_tournament, Results)
-    z =0
-    for i in lt.iterator(Tmatch):
-        z=lt.isPresent(Goals,i["home_team"])
+    
+    for i in lt.iterator(Tmatchs):
+        z=lt.isPresent(Goals,i["home_team"]) 
         if z != 0:
             lt.addLast(r, lt.getElement(Goals,z))
 
@@ -342,7 +343,7 @@ def filterbyPeriod(data, stardate, end_date):
     newArray = lt.newList('ARRAY_LIST')
     array = sa.sort(data,cmp_fecha_país_mayor_menor)
     low = searchMin(array,end_date, 'date')
-    high = binary_searchMax(array, stardate, 'date')
+    high = searchMax(array,stardate , 'date')
     while low <= high:
         lt.addlast(newArray, lt.getElement(array,low))
         low+=1
@@ -353,30 +354,44 @@ def filterbyPeriod(data, stardate, end_date):
 
 def findMatch(name_tournament, data):
     new_array = lt.newList('ARRAY_LIST')
-    for j in iterator( data):
+    for j in lt.iterator( data):
         if j['tournament'] == name_tournament:
             new_array.append(j)
     return new_array
 
-# busqueda binaria 2.0
+# busqueda binaria a la dereca
 
-def binary_searchMax(data, goal,key ):
+def searchMax(data, goal,key ):
     low, high = 0 , lt.size(data)
 
     while low<= high:
         mid = (low + high) // 2
-        if lt.getElement(data,mid)[key] ==goal:
+        if lt.getElement(data,mid)[key].split('-')[0]  ==goal.split('-')[0] :
             low = mid+1
-        elif lt.getElement(data,mid)[key] >goal:
+        elif lt.getElement(data,mid)[key].split('-')[0]  >goal.split('-')[0] :
             low = mid+1
 
     return  low
 
+#busqueda binaria a al izquierda
+def searchMin(data, goal,key):
+    left, right = 0, lt.size(data) - 1
+    result = -1  # Inicializamos el resultado en -1, lo que significa que no se encontró el elemento
 
-def searchMin(data, goal, key):
-    for element in lt.iterator(data):
-        if element[key] == goal:
-            return element
+    while left <= right:
+        mid = left + (right - left) // 2  # Calculamos el punto medio
+        
+        f=lt.getElement(data,mid)[key].split('-')[0] 
+        
+        if lt.getElement(data,mid)[key].split('-')[0]  == goal.split('-')[0] :
+            result = mid  # Actualizamos el resultado si encontramos el elemento
+            right = mid - 1  # Continuamos buscando en la mitad izquierda
+        elif lt.getElement(data,mid)[key].split('-')[0]  > goal.split('-')[0] :
+            left = mid + 1  # Descartamos la mitad izquierda
+        else:
+            right = mid - 1  # Descartamos la mitad derecha
+
+    return result
 
 
 
