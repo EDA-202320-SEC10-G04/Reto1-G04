@@ -422,16 +422,41 @@ def buscar_torneo(results, goal_date, home_team, away_team):
 
 #Req 6
 
+
+
+
+
 def cmp_total_p(equipo1, equipo2):
     """
     Compara dos equipos por su criterio compuesto de estadísticas.
     """
-    if equipo1['total_puntos'] != equipo2['total_puntos']:
-        return equipo1['total_puntos'] - equipo2['total_puntos']
-    elif equipo1['diferencia_goles'] != equipo2['diferencia_goles']:
-        return equipo1['diferencia_goles'] - equipo2['diferencia_goles']
+    if equipo1['total_puntos'] > equipo2['total_puntos']:
+        return True
+    elif equipo1['total_puntos'] < equipo2['total_puntos']:
+        return False
     else:
-        return equipo1['puntos_penal'] - equipo2['puntos_penal']
+        if equipo1['diferencia_goles'] > equipo2['diferencia_goles']:
+            return True
+        elif equipo1['diferencia_goles'] < equipo2['diferencia_goles']:
+            return False
+        else:
+            if equipo1['puntos_penal'] > equipo2['puntos_penal']:
+                return True
+            elif equipo1['puntos_penal'] < equipo2['puntos_penal']:
+                return False
+            else:
+                if equipo1['partidos_disputados'] < equipo2['partidos_disputados']:
+                    return True
+                elif equipo1['partidos_disputados'] > equipo2['partidos_disputados']:
+                    return False
+                else:
+                    if equipo1['puntos_autogol'] < equipo2['puntos_autogol']:
+                        return True
+                    elif equipo1['puntos_autogol'] > equipo2['puntos_autogol']:
+                        return False
+                    else:
+                        return True
+
 
 def consultar_mejores_equipos(data_structs, N, torneo_nombre, fecha_inicio, fecha_fin):
     # Filtrar los datos por torneo y período de tiempo
@@ -448,27 +473,30 @@ def consultar_mejores_equipos(data_structs, N, torneo_nombre, fecha_inicio, fech
         away_score = float(result['away_score'])
         
         # Actualizar estadísticas de los equipos
-        actualizar_estadisticas_equipo(team_stats, home_team, home_score, away_score)
-        actualizar_estadisticas_equipo(team_stats, away_team, away_score, home_score)
+        actualizar_estadisticas_equipo(team_stats, home_team, home_score, away_score, data_structs['goalscore'])
+        actualizar_estadisticas_equipo(team_stats, away_team, away_score, home_score, data_structs['goalscore'])
     
     # Ordenar equipos por criterio compuesto de estadísticas
     list_team = lt.newList('ARRAY_LIST')
     for a in team_stats.values():
         lt.addLast(list_team, a)
 
-    sa.sort(list_team, cmp_total_p)
+    list_team = sa.sort(list_team, cmp_total_p)
+    list_team = lt.subList(list_team, 1, N)
+
+
     
     # Obtener información adicional
-    total_equipos = len(team_stats)
+    total_equipos = obtener_total_equipos(filtered_results)
     total_encuentros = lt.size(filtered_results)
     total_paises = obtener_total_paises(filtered_results)
     total_ciudades = obtener_total_ciudades(filtered_results)
     ciudad_mas_partidos = obtener_ciudad_mas_partidos(filtered_results)
     
     # Limitar la lista de equipos clasificados a los primeros N
-    equipos_clasificados = list_team[:N]
     
-    return total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados
+    
+    return total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, list_team
 
 def filtrar_por_torneo(results, torneo_nombre):
     """
@@ -507,13 +535,19 @@ def obtener_estadisticas_equipo(team_stats, team_name):
         'diferencia_goles': 0,
         'partidos_disputados': 0,
         'puntos_penal':0,
-        'puntos_autogol':0
+        'puntos_autogol':0,
+        'victorias':0,
+        'derrotas': 0,
+        'empates': 0,
+        'goles_obtenidos':0,
+        'goles_recibidos':0,
+        'max_goleador': None
     }
     team_stats[team_name] = new_team_stats
     return new_team_stats
 
 
-def actualizar_estadisticas_equipo(team_stats, team_name, goles_a_favor, goles_en_contra):
+def actualizar_estadisticas_equipo(team_stats, team_name, goles_a_favor, goles_en_contra, data_structs):
     """
     Actualiza las estadísticas de un equipo en función de los goles a favor y en contra.
     """
@@ -523,8 +557,10 @@ def actualizar_estadisticas_equipo(team_stats, team_name, goles_a_favor, goles_e
     equipo['total_puntos'] += calcular_puntos(goles_a_favor, goles_en_contra)
     equipo['diferencia_goles'] += goles_a_favor - goles_en_contra
     equipo['partidos_disputados'] += 1
-    equipo['puntos_penal'] += calcular_puntos_penal(goles_a_favor)
-    equipo['puntos_autogol'] += calcular_puntos_autogol(goles_en_contra)
+    equipo['puntos_penal'] += goles_a_favor
+    for goal in lt.iterator(data_structs):
+        if goal['own_goal']==True:
+            equipo['puntos_autogol'] += 1
     
     
     if goles_a_favor > goles_en_contra:
@@ -538,7 +574,8 @@ def actualizar_estadisticas_equipo(team_stats, team_name, goles_a_favor, goles_e
     equipo['goles_recibidos'] += goles_en_contra
     
     # Actualiza el máximo goleador
-    actualizar_max_goleador(equipo, goles_a_favor, goles_en_contra)
+    
+    actualizar_max_goleador(equipo, goles_a_favor, goles_en_contra, data_structs)
 
 def calcular_puntos(goles_a_favor, goles_en_contra):
     """
@@ -551,28 +588,79 @@ def calcular_puntos(goles_a_favor, goles_en_contra):
     else:
         return 0
 
-def calcular_puntos_penal(goles_a_favor):
-    """
-    Calcula los puntos obtenidos desde la línea penal.
-    """
-    return goles_a_favor
 
-def calcular_puntos_autogol(goles_en_contra):
+
+def calcular_puntos_autogol(goalscore):
     """
     Calcula los puntos recibidos por autogol.
     """
-    return goles_en_contra
 
-def actualizar_max_goleador(equipo, goles_a_favor, goles_en_contra):
+    autogol = 0  # Utilizamos un conjunto para evitar duplicados
+    for goal in lt.iterator(goalscore):
+        if goal['own_goal']:
+            autogol +=1
+
+    return autogol
+def obtener_max_goleador(data_structs, equipo_nombre):
+    """
+    Obtiene la información del máximo goleador de un equipo.
+    """
+    max_goleador_equipo = {}
+    max_goles = 0
+    
+    for gol in lt.iterator(data_structs):
+ 
+        equipo_local = gol['home_team']
+        equipo_visitante = gol['away_team']
+        equipo_anotador = gol['team']
+        jugador_anotador = gol['scorer']
+        if gol['minute']:
+            minuto = float(gol['minute'])
+
+        # Verifica si el gol pertenece al equipo y si el jugador ha anotado más goles
+        if equipo_nombre == equipo_local or equipo_nombre == equipo_visitante:
+            if equipo_nombre == equipo_anotador:
+                if jugador_anotador != '' :
+                    if jugador_anotador not in max_goleador_equipo:
+                        max_goleador_equipo[jugador_anotador] = {'goles_anotados': 1, 'partidos_anotados': 1, 'promedio_tiempo': minuto}
+                    else:
+                        max_goleador_equipo[jugador_anotador]['goles_anotados'] += 1
+                        max_goleador_equipo[jugador_anotador]['partidos_anotados'] += 1
+                        max_goleador_equipo[jugador_anotador]['promedio_tiempo'] += minuto
+                        max_goleador_equipo[jugador_anotador]['promedio_tiempo'] /= max_goleador_equipo[jugador_anotador]['partidos_anotados']
+                        
+                    if max_goleador_equipo[jugador_anotador]['goles_anotados'] > max_goles:
+                        max_goles = max_goleador_equipo[jugador_anotador]['goles_anotados']
+                        max_goleador = jugador_anotador
+
+    return {'nombre_jugador': max_goleador, 'goles_anotados': max_goles} if max_goles > 0 else None
+
+def actualizar_max_goleador(equipo, goles_a_favor, goles_en_contra, data_structs):
     """
     Actualiza al máximo goleador del equipo.
     """
-    if equipo['max_goleador'] is None or goles_a_favor > equipo['max_goleador']['goles_anotados']:
+    max_goleador_data = obtener_max_goleador(data_structs, equipo['nombre_equipo'])
+    
+    if max_goleador_data:
         equipo['max_goleador'] = {
-            'goles_anotados': goles_a_favor,
-            'partidos_anotados': 1,
-            'promedio_tiempo': 0  # Debes calcular este valor
+            'nombre_jugador': max_goleador_data['nombre_jugador'],
+            'goles_anotados': max_goleador_data['goles_anotados'],
+            'partidos_anotados': max_goleador_data.get('partidos_anotados', 0), 
+            'promedio_tiempo': max_goleador_data.get('promedio_tiempo', 0), 
         }
+    else:
+        equipo['max_goleador'] = None
+
+def obtener_total_equipos(results):
+    """
+    Obtiene el total de países involucrados en los resultados.
+    """
+    paises = set()  # Utilizamos un conjunto para evitar duplicados
+    for result in lt.iterator(results):
+         paises.add(result['home_team'])
+         paises.add(result['away_team'])
+
+    return len(paises)
 
 def obtener_total_paises(results):
     """

@@ -190,22 +190,39 @@ def print_consultar_anotaciones_jugador_periodo(torneo_nombre, total_equipos, to
     print(f"{torneo_nombre} Total de ciudades: {total_ciudades}") 
     print(f"{torneo_nombre} Ciudad con más partidos: {ciudad_mas_partidos}") 
     print("Detalles de los goles:")
-    
+
     if total_encuentros > 0:
-        keys = ['date', 'home_team', 'away_team', 'scorer', 'minute', 'penalty', 'own_goal', 'tournament']
-        printSimpleTable(equipos_clasificados,keys)
-        
+        keys = ['nombre_equipo', 'total_puntos', 'diferencia_goles', 'partidos_disputados', 'puntos_penal', 'puntos_autogol', 'victorias', 'derrotas', 'empates', 'goles_obtenidos', 'goles_recibidos', 'max_goleador']
 
         if total_encuentros > 6:
             equipos_clasificados = controller.sixdata(equipos_clasificados)
-         
-        printSimpleTable(equipos_clasificados,keys)
-         
+
+        # Crear una tabla para los equipos clasificados
+        equipos_table = PrettyTable()
+        equipos_table.field_names = keys
+        
+
+        # Recorrer los equipos clasificados y agregarlos a la tabla
+        for equipo in lt.iterator(equipos_clasificados):
+            max_goleador_data = equipo['max_goleador']  # Obtener los datos del máximo goleador
+            max_goleador_table = PrettyTable()  # Crear una tabla para el máximo goleador
+            max_goleador_keys = ['nombre_jugador', 'goles_anotados', 'partidos_anotados', 'promedio_tiempo']
+            
+            # Agregar los datos del máximo goleador a la tabla del máximo goleador
+            max_goleador_table.field_names = max_goleador_keys
+            max_goleador_table.add_row([max_goleador_data.get(key, '') for key in max_goleador_keys])
+            
+            # Agregar una fila en la tabla de equipos con la tabla del máximo goleador
+            equipo_data = [equipo[key] if key != 'max_goleador' else str(max_goleador_table) for key in keys]
+            equipos_table.add_row(equipo_data)
+            equipos_table.horizontal_char = '-'
+        # Imprimir la tabla de equipos clasificados
+        print(equipos_table)
     else:
         print("No se encontraron goles para el jugador especificado.")
 
 
-
+    
 def print_req_7(control):
     """
         Función que imprime la solución del Requerimiento 7 en consola
