@@ -145,7 +145,9 @@ def queryMatchsbyPeriod(name_tournament, start_date, end_date, goalscore, result
     """
     # TODO: Modificar el requerimiento 4
     matchs = model.queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results)
-    return matchs
+    sortmatchAlphabet = model.sortmatchAlphabet(matchs)
+    Tmatchs = getFirstNum(sortmatchAlphabet,6)
+    return Tmatchs
 
 
 

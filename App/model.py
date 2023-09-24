@@ -190,6 +190,14 @@ def compare_away(data1, data2):
         return True
     elif team1 > team2:
         return False
+
+def compare_country(data1, data2):
+    team1 = data1['country'].lower()
+    team2 = data2['country'].lower()
+    if team1 < team2:
+        return True
+    elif team1 > team2:
+        return False
 #req1
 
 
@@ -330,22 +338,26 @@ def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results
     Results = filterbyPeriod(results,start_date, end_date)
     Tmatchs = findMatch(name_tournament, Results)
     
-    for i in lt.iterator(Tmatchs):
-        z=lt.isPresent(Goals,i["home_team"]) 
-        if z != 0:
-            lt.addLast(r, lt.getElement(Goals,z))
+    for element in lt.iterator(Tmatchs):
+        z = lt.isPresent(Goals, element['home_team'])
+        if  z !=0:
+            lt.addLast(Tmatchs['winner'],lt.getElement(Goals['penalty'],z))
 
-    return r
+    
 
-    pass
+    return Tmatchs
+
+    
 
 def filterbyPeriod(data, stardate, end_date):
+    stardate = stardate.split('-')[0]
+    end_date = end_date.split('-')[0]
     newArray = lt.newList('ARRAY_LIST')
     array = sa.sort(data,cmp_fecha_país_mayor_menor)
     low = searchMin(array,end_date, 'date')
     high = searchMax(array,stardate , 'date')
     while low <= high:
-        lt.addlast(newArray, lt.getElement(array,low))
+        lt.addLast(newArray, lt.getElement(array,low))
         low+=1
         
     return newArray
@@ -356,7 +368,7 @@ def findMatch(name_tournament, data):
     new_array = lt.newList('ARRAY_LIST')
     for j in lt.iterator( data):
         if j['tournament'] == name_tournament:
-            new_array.append(j)
+            lt.addLast(new_array,j)
     return new_array
 
 # busqueda binaria a la dereca
@@ -366,10 +378,12 @@ def searchMax(data, goal,key ):
 
     while low<= high:
         mid = (low + high) // 2
-        if lt.getElement(data,mid)[key].split('-')[0]  ==goal.split('-')[0] :
+        if lt.getElement(data,mid)[key].split('-')[0]  ==goal :
             low = mid+1
-        elif lt.getElement(data,mid)[key].split('-')[0]  >goal.split('-')[0] :
+        elif lt.getElement(data,mid)[key].split('-')[0]  >goal :
             low = mid+1
+        else:
+            high= mid-1
 
     return  low
 
@@ -383,17 +397,20 @@ def searchMin(data, goal,key):
         
         f=lt.getElement(data,mid)[key].split('-')[0] 
         
-        if lt.getElement(data,mid)[key].split('-')[0]  == goal.split('-')[0] :
+        if lt.getElement(data,mid)[key].split('-')[0]  ==  goal:
             result = mid  # Actualizamos el resultado si encontramos el elemento
             right = mid - 1  # Continuamos buscando en la mitad izquierda
-        elif lt.getElement(data,mid)[key].split('-')[0]  > goal.split('-')[0] :
+        elif lt.getElement(data,mid)[key].split('-')[0]  > goal:
             left = mid + 1  # Descartamos la mitad izquierda
         else:
             right = mid - 1  # Descartamos la mitad derecha
 
     return result
 
-
+def sortmatchAlphabet(data):
+    sa.sort(data, compare_country)
+    sa.sort(data, cmp_fecha_país_mayor_menor)
+    return data
 
 
 
