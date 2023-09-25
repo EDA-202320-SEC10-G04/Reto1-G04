@@ -131,13 +131,11 @@ def get_first_n_goals_by_player(control, player_name, n, recursive=True):
 
 
 
-def req_3(control):
-    """
-    Retorna el resultado del requerimiento 3
-    """
-    # TODO: Modificar el requerimiento 3
-    pass
-
+def consulta_partidos_equipo_periodo(control, team_name, fecha_inicio,fecha_fin):
+    data_structs = control["model"]
+    total_games , total_home_games, total_away_games = model.iter_consultar_partidos_equipo_periodo(data_structs, team_name,
+                                                                                                    fecha_inicio, fecha_fin)
+    return total_games , total_home_games, total_away_games
 
 def req_4(control):
     """

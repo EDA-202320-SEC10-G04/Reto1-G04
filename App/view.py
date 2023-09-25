@@ -137,12 +137,18 @@ def print_first_n_goals_by_player(total_goals, player_goals):
 
 
 
-def print_req_3(control):
+def print_games_over_a_period_of_time(total_games, total_home_games, total_away_games):
+    """ Función que imprime los partidos, en un periodo de tiempo específico
+
+    Args:
+        total_games (int): Número total de partidos
+        total_home_games (int): Número de partidos jugados como local
+        total_away_games (int): Número de partidos jugados como visitante
     """
-        Función que imprime la solución del Requerimiento 3 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 3
-    pass
+    print(f"\nTotal de partidos jugados por el equipo: {total_games}")
+    print(f"Total de partidos jugados por el equipo como local: {total_home_games}")
+    print(f"Total de partidos jugados por el equipo como visitante: {total_away_games}")     
+    print("Detalles de los goles:")
 
 
 def print_req_4(control):
@@ -303,7 +309,15 @@ def menu_cycle():
                 
 
         elif int(inputs) == 4:
-            print_req_3(control)
+            print("========================== Req No. 3 Inputs ===============")
+            team_name = input("Ingrese el nombre del equipo: ")
+            fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD):")
+            fecha_fin = input("ingrese la fecha de fin (YYYY-MM-DD):")
+            print("========================= Req No.3 Results ==================")
+            total_games, total_home_games, total_away_games = controller.consulta_partidos_equipo_periodo(control, team_name,
+                                                                                                          fecha_inicio, fecha_fin)
+            
+            print_games_over_a_period_of_time(total_games, total_home_games, total_away_games)
 
         elif int(inputs) == 5:
             pass
