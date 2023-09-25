@@ -138,13 +138,19 @@ def req_3(control):
     # TODO: Modificar el requerimiento 3
     pass
 
-
-def req_4(control):
+#req 4
+def queryMatchsbyPeriod(name_tournament, start_date, end_date, goalscore, results):
     """
     Retorna el resultado del requerimiento 4
     """
     # TODO: Modificar el requerimiento 4
-    pass
+    matchs, total_coutries, total_cities,size = model.queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results)
+    sortmatchAlphabet = model.sortmatchAlphabet(matchs)
+    
+    Tmatchs = sixdata(sortmatchAlphabet)
+    return Tmatchs, total_coutries, total_cities, size
+
+
 
 
 #Requerimiento 5

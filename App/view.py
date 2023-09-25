@@ -306,10 +306,32 @@ def menu_cycle():
                 
 
         elif int(inputs) == 4:
-            print_req_3(control)
+            pass
+            
 
         elif int(inputs) == 5:
-            pass
+            """PConsultar los partidos relacionados
+             con un torneo durante un
+            periodo especifico."""
+            name_tournament = input(" Ingrese el nombre del Torneo: ")
+            start_date = input("Ingrese la fecha de inicio del periodo a consultar (YYYY-MM-DD): ")
+            end_date = input("Ingrese la fecha de final del periodo a consultar (YYYY-MM-DD): ")
+            matchs,total_coutries, total_cities, size = controller.queryMatchsbyPeriod(name_tournament, start_date, end_date ,control['model']['goalscore'], control['model']['results'])
+            print("========================== Req No. 4 Inputs ===============")
+            print(f"tournament name : {name_tournament}")
+            print(f"Start date: {start_date}")
+            print(f"End date: {end_date}")
+            print("========================== Req No. 4 Inputs ===============")
+            print(f"{name_tournament} total countries: ",len(matchs))
+            print(f"{name_tournament} total countries: ",total_coutries)
+            print(f"{name_tournament} total cities: ",total_cities)
+            if size >= 6:
+                print("\n the Tournament results has more than 6 records")
+            else:
+                print("\n the Tournament results has more than 6 records")
+            printSimpleTable(matchs,['date','tournament','country','city','home_team','away_team','home_score','away_score','winner'])
+            print_req_3(control)
+            
 
         elif int(inputs) == 6:
             print("========================== Req No. 5 Inputs ===============")

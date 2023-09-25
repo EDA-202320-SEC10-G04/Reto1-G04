@@ -36,6 +36,7 @@ from DISClib.Algorithms.Sorting import mergesort as merg
 from DISClib.Algorithms.Sorting import quicksort as quk
 assert cf
 import datetime 
+
 """
 Se define la estructura de un catálogo de videos. El catálogo tendrá
 dos listas, una para los videos, otra para las categorias de los mismos.
@@ -189,6 +190,7 @@ def compare_away(data1, data2):
         return True
     elif team1 > team2:
         return False
+<<<<<<< HEAD
 #req 6
 def cmp_total_p(equipo1, equipo2):
     """
@@ -222,7 +224,24 @@ def cmp_total_p(equipo1, equipo2):
                         return True
 
 #req1
+=======
+>>>>>>> origin/Carlos
 
+def compare_country(data1, data2):
+    team1 = data1['country'].lower()
+    team2 = data2['country'].lower()
+    if team1 < team2:
+        return True
+    elif team1 > team2:
+        return False
+#req1
+def compare_countryMoretoLess(data1, data2):
+    team1 = data1['country'].lower()
+    team2 = data2['country'].lower()
+    if team1 > team2:
+        return True
+    elif team1 < team2:
+        return False
 
 def sortName(data,name_team, condition_team, number_matchs):
     e =0
@@ -268,7 +287,7 @@ def sortName(data,name_team, condition_team, number_matchs):
         return answerSort
  
 
-def searchname(data,name_team, condition_team, number_matchs,f):
+def searchname(data,name_team,  f):
         NameSort = lt.newList('ARRAY_LIST')
         newList = []
         if f=='home_team':
@@ -351,13 +370,135 @@ def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
 #Req 3
 def req_3(data_structs):
     pass
-
-def req_4(data_structs):
+#Req 5
+def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results):
     """
     Función que soluciona el requerimiento 4
     """
-    # TODO: Realizar el requerimiento 4
-    pass
+    r = lt.newList('ARRAY_LIST')
+    Goals = filterbyPeriod(goalscore,start_date, end_date)
+    Results = filterbyPeriod(results,start_date, end_date)
+    Tmatchs = findMatch(name_tournament, Results)
+    sa.sort(Goals,compare_away)
+    goals =sa.sort(Goals,compare_home)
+    newarray = lt.newList('ARRAY_LIST')
+    for element in lt.iterator(Tmatchs):
+        f= searchnameBinary(goals, element['home_team'],'home_team',element['away_team'],'away_team')
+
+        
+        if f !=-1 :
+            a=  lt.getElement(goals,f)['away_team']
+            c = lt.getElement(goals,f)['home_team']
+            z =lt.getElement(goals,f)
+            if element['home_score'] == element['away_score']:
+                element['winner'] = z['team']
+            else:
+                element['winner'] = 'Unknown'
+            lt.addLast(newarray,element)
+        
+
+
+    total_coutries = len(find_repeated(newarray,'country'))
+    total_cities= len(find_repeated(newarray,'city'))
+    size = lt.size(newarray)
+    return newarray, total_coutries, total_cities,size
+
+    
+
+def find_repeated(data,key):
+    
+    list_repeated = []
+    for element in lt.iterator(data):
+        if element[key] not in list_repeated:
+            list_repeated.append(element[key])
+       
+    return list_repeated
+
+def filterbyPeriod(data, stardate, end_date):
+    stardate = stardate.split('-')[0]
+    end_date = end_date.split('-')[0]
+    newArray = lt.newList('ARRAY_LIST')
+    array = sa.sort(data,cmp_fecha_país_mayor_menor)
+    low = searchMin(array,end_date, 'date')
+    high = searchMax(array,stardate , 'date')
+    while low <= high:
+        lt.addLast(newArray, lt.getElement(array,low))
+        low+=1
+        
+    return newArray
+
+
+
+def findMatch(name_tournament, data):
+    new_array = lt.newList('ARRAY_LIST')
+    for j in lt.iterator( data):
+        if j['tournament'] == name_tournament:
+            lt.addLast(new_array,j)
+    return new_array
+
+# busqueda binaria a la dereca
+
+def searchMax(data, goal,key ):
+    low, high = 0 , lt.size(data)
+
+    while low<= high:
+        mid = (low + high) // 2
+        
+        if lt.getElement(data,mid)[key].split('-')[0]  ==goal :
+            low = mid+1
+        elif lt.getElement(data,mid)[key].split('-')[0]  >goal :
+            low = mid+1
+        else:
+            high= mid-1
+
+    return  low
+
+#busqueda binaria a al izquierda
+def searchMin(data, goal,key):
+    left, right = 0, lt.size(data) - 1
+    result = -1  # Inicializamos el resultado en -1, lo que significa que no se encontró el elemento
+
+    while left <= right:
+        mid = left + (right - left) // 2  # Calculamos el punto medio
+        
+        f=lt.getElement(data,mid)[key].split('-')[0] 
+        
+        if lt.getElement(data,mid)[key].split('-')[0]  ==  goal:
+            result = mid  # Actualizamos el resultado si encontramos el elemento
+            right = mid - 1  # Continuamos buscando en la mitad izquierda
+        elif lt.getElement(data,mid)[key].split('-')[0]  > goal:
+            left = mid + 1  # Descartamos la mitad izquierda
+            result = mid + 1
+        else:
+            right = mid - 1  # Descartamos la mitad derecha
+
+    return result
+
+def sortmatchAlphabet(data):
+    sa.sort(data, compare_countryMoretoLess)
+    sa.sort(data, cmp_fecha_país_mayor_menor)
+    return data
+#search name binary
+def searchnameBinary(data, goal, key, goal2, key2):
+    low, high = 0 , lt.size(data)
+    x =-1
+    while low<= high:
+        mid = (low + high) // 2
+        f=lt.getElement(data,mid)[key].lower()
+        if lt.getElement(data,mid)[key].lower()  ==goal.lower() and lt.getElement(data,mid)[key2].lower() == goal2.lower():
+            x = mid
+            return x
+        elif lt.getElement(data,mid)[key].lower() <goal.lower() or  (lt.getElement(data,mid)[key].lower() == goal.lower() and  lt.getElement(data,mid)[key2].lower() <goal2.lower()):
+            #partido["local"] < local or (partido["local"] == local and partido["visitante"] < visitante):
+            low = mid+1
+            
+        else:
+            high= mid-1
+
+    return  x
+
+
+
 
 #Req 5
 def consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, fecha_inicio, fecha_fin, recursive = True):
