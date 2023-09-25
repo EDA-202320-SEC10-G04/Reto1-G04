@@ -189,7 +189,37 @@ def compare_away(data1, data2):
         return True
     elif team1 > team2:
         return False
-    
+#req 6
+def cmp_total_p(equipo1, equipo2):
+    """
+    Compara dos equipos por su criterio compuesto de estadísticas.
+    """
+    if equipo1['total_puntos'] > equipo2['total_puntos']:
+        return True
+    elif equipo1['total_puntos'] < equipo2['total_puntos']:
+        return False
+    else:
+        if equipo1['diferencia_goles'] > equipo2['diferencia_goles']:
+            return True
+        elif equipo1['diferencia_goles'] < equipo2['diferencia_goles']:
+            return False
+        else:
+            if equipo1['puntos_penal'] > equipo2['puntos_penal']:
+                return True
+            elif equipo1['puntos_penal'] < equipo2['puntos_penal']:
+                return False
+            else:
+                if equipo1['partidos_disputados'] < equipo2['partidos_disputados']:
+                    return True
+                elif equipo1['partidos_disputados'] > equipo2['partidos_disputados']:
+                    return False
+                else:
+                    if equipo1['puntos_autogol'] < equipo2['puntos_autogol']:
+                        return True
+                    elif equipo1['puntos_autogol'] > equipo2['puntos_autogol']:
+                        return False
+                    else:
+                        return True
 
 #req1
 
@@ -426,39 +456,18 @@ def buscar_torneo(results, goal_date, home_team, away_team):
 
 
 
-def cmp_total_p(equipo1, equipo2):
-    """
-    Compara dos equipos por su criterio compuesto de estadísticas.
-    """
-    if equipo1['total_puntos'] > equipo2['total_puntos']:
-        return True
-    elif equipo1['total_puntos'] < equipo2['total_puntos']:
-        return False
-    else:
-        if equipo1['diferencia_goles'] > equipo2['diferencia_goles']:
-            return True
-        elif equipo1['diferencia_goles'] < equipo2['diferencia_goles']:
-            return False
-        else:
-            if equipo1['puntos_penal'] > equipo2['puntos_penal']:
-                return True
-            elif equipo1['puntos_penal'] < equipo2['puntos_penal']:
-                return False
-            else:
-                if equipo1['partidos_disputados'] < equipo2['partidos_disputados']:
-                    return True
-                elif equipo1['partidos_disputados'] > equipo2['partidos_disputados']:
-                    return False
-                else:
-                    if equipo1['puntos_autogol'] < equipo2['puntos_autogol']:
-                        return True
-                    elif equipo1['puntos_autogol'] > equipo2['puntos_autogol']:
-                        return False
-                    else:
-                        return True
 
 
 def consultar_mejores_equipos(data_structs, N, torneo_nombre, fecha_inicio, fecha_fin):
+    """ 
+    Calcula El total de equipos,
+    el total de encuentros disputados, 
+    el total de países,
+    el total de ciudades, 
+    el nombre de la ciudad donde más partidos se han disputado,
+    el listado de los equipos que conforman el torneo
+
+    """
     # Filtrar los datos por torneo y período de tiempo
     tournament_results = filtrar_por_torneo(data_structs['results'], torneo_nombre)
     filtered_results = filtrar_por_periodo(tournament_results, fecha_inicio, fecha_fin)
@@ -476,7 +485,7 @@ def consultar_mejores_equipos(data_structs, N, torneo_nombre, fecha_inicio, fech
         actualizar_estadisticas_equipo(team_stats, home_team, home_score, away_score, data_structs['goalscore'])
         actualizar_estadisticas_equipo(team_stats, away_team, away_score, home_score, data_structs['goalscore'])
     
-    # Ordenar equipos por criterio compuesto de estadísticas
+    
     list_team = lt.newList('ARRAY_LIST')
     for a in team_stats.values():
         lt.addLast(list_team, a)
@@ -632,8 +641,9 @@ def obtener_max_goleador(data_structs, equipo_nombre):
                     if max_goleador_equipo[jugador_anotador]['goles_anotados'] > max_goles:
                         max_goles = max_goleador_equipo[jugador_anotador]['goles_anotados']
                         max_goleador = jugador_anotador
-
-    return {'nombre_jugador': max_goleador, 'goles_anotados': max_goles} if max_goles > 0 else None
+                        partidos_anotados = max_goleador_equipo[jugador_anotador]['partidos_anotados']
+                        promedio_tiempo = max_goleador_equipo[jugador_anotador]['promedio_tiempo']
+    return {'nombre_jugador': max_goleador, 'goles_anotados': max_goles, 'partidos_anotados':partidos_anotados, 'promedio_tiempo': promedio_tiempo} if max_goles > 0 else None
 
 def actualizar_max_goleador(equipo, goles_a_favor, goles_en_contra, data_structs):
     """
@@ -645,8 +655,8 @@ def actualizar_max_goleador(equipo, goles_a_favor, goles_en_contra, data_structs
         equipo['max_goleador'] = {
             'nombre_jugador': max_goleador_data['nombre_jugador'],
             'goles_anotados': max_goleador_data['goles_anotados'],
-            'partidos_anotados': max_goleador_data.get('partidos_anotados', 0), 
-            'promedio_tiempo': max_goleador_data.get('promedio_tiempo', 0), 
+            'partidos_anotados': max_goleador_data['partidos_anotados'],
+            'promedio_tiempo': max_goleador_data['promedio_tiempo'] 
         }
     else:
         equipo['max_goleador'] = None
@@ -699,12 +709,9 @@ def obtener_ciudad_mas_partidos(results):
     
     return ciudad_mas_partidos
 
-def req_7(data_structs):
-    """
-    Función que soluciona el requerimiento 7
-    """
-    # TODO: Realizar el requerimiento 7
+def req_7():
     pass
+
 
 
 def req_8(data_structs):

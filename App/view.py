@@ -110,7 +110,7 @@ def print_req_1(control):
     """
     # TODO: Imprimir el resultado del requerimiento 1
     pass
-
+# req 2
 def print_first_n_goals_by_player(total_goals, player_goals):
     """Muestra los goles del jugador usando printSimpleTable
 
@@ -152,7 +152,7 @@ def print_req_4(control):
     # TODO: Imprimir el resultado del requerimiento 4
     pass
 
-
+#req 5
 def print_annotations_over_a_period_of_time(total_goals, total_tournaments, penalties, own_goals, player_goals):
     """ Función que imprime las anotaciones, en un periodo de tiempo específico
 
@@ -200,8 +200,9 @@ def print_consultar_anotaciones_jugador_periodo(torneo_nombre, total_equipos, to
         # Crear una tabla para los equipos clasificados
         equipos_table = PrettyTable()
         equipos_table.field_names = keys
-        
-
+        equipos_table.horizontal_char = '-'
+        equipos_table.hrules =ALL
+        equipos_table.field_names = keys
         # Recorrer los equipos clasificados y agregarlos a la tabla
         for equipo in lt.iterator(equipos_clasificados):
             max_goleador_data = equipo['max_goleador']  # Obtener los datos del máximo goleador
@@ -215,7 +216,7 @@ def print_consultar_anotaciones_jugador_periodo(torneo_nombre, total_equipos, to
             # Agregar una fila en la tabla de equipos con la tabla del máximo goleador
             equipo_data = [equipo[key] if key != 'max_goleador' else str(max_goleador_table) for key in keys]
             equipos_table.add_row(equipo_data)
-            equipos_table.horizontal_char = '-'
+            
         # Imprimir la tabla de equipos clasificados
         print(equipos_table)
     else:
@@ -283,9 +284,11 @@ def menu_cycle():
 
 
         elif int(inputs) == 2:
+            print("========================== Req No. 1 Inputs ===============")
             number_matchs =int( input("Ingrese el numero de partidos: "))
             name_team = input("Ingrese el nombre del Equipo: ")
             condition_team = input("Ingrese la condicion del equipo (local, visitante o indiferente): ")
+            print("========================= Req No.1 Results ==================")
             total_matchs = controller.sortName(control['model']['results'], name_team, condition_team, number_matchs)
             printSimpleTable(total_matchs,['date','home_team','away_team','country','city','home_score','away_score'])
 
@@ -314,23 +317,24 @@ def menu_cycle():
             fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD): ")
             fecha_fin = input("Ingrese la fecha de fin (YYYY-MM-DD): ")
             
-            print("========================= Req No.2 Results ==================")
-            total_goals, total_tournaments, penalties, own_goals, player_goals = controller.consultar_anotaciones_jugador_periodo(
+            print("========================= Req No.5 Results ==================")
+            time, total_goals, total_tournaments, penalties, own_goals, player_goals = controller.consultar_anotaciones_jugador_periodo(
             control, player_name, fecha_inicio, fecha_fin, recursive=rec)
 
-
+            print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
             print_annotations_over_a_period_of_time(total_goals, total_tournaments, penalties, own_goals, player_goals)
 
         elif int(inputs) == 7:
-            print("========================== Req No. 5 Inputs ===============")
+            print("========================== Req No. 6 Inputs ===============")
             torneo_nombre = input("Ingrese el nombre del torneo: ")
             N = int(input("Ingrese el número de partidos"))
             fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD): ")
             fecha_fin = input("Ingrese la fecha de fin (YYYY-MM-DD): ")
             
-            print("========================= Req No.2 Results ==================")
-            total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados= controller.req_6(
+            print("========================= Req No.6 Results ==================")
+            time, total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados= controller.req_6(
            control, N, torneo_nombre, fecha_inicio, fecha_fin)
+            print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
             print_consultar_anotaciones_jugador_periodo(torneo_nombre, total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados)
 
 

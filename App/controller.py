@@ -150,17 +150,24 @@ def req_4(control):
 #Requerimiento 5
 
 def consultar_anotaciones_jugador_periodo(control, jugador_nombre, fecha_inicio, fecha_fin, recursive = True):
+    start_time = get_time()
     
     data_structs = control['model']
     total_goals, total_tournaments, penalties, own_goals, player_goals = model.consultar_anotaciones_jugador_periodo(data_structs, jugador_nombre, 
-                                                                                                                     fecha_inicio, fecha_fin, recursive)
-    return total_goals, total_tournaments, penalties, own_goals, player_goals
+                                                                                                                fecha_inicio, fecha_fin, recursive)
+    end_time = get_time()
+    deltatime = delta_time(start_time, end_time)
+    
+    return deltatime, total_goals, total_tournaments, penalties, own_goals, player_goals
 
 def req_6(control, N, torneo_nombre, fecha_inicio, fecha_fin):
     data_structs = control['model']
+    start_time = get_time()
     total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados = model.consultar_mejores_equipos(data_structs, N, torneo_nombre, 
                                                                                                                                                fecha_inicio, fecha_fin)
-    return total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados
+    end_time = get_time()
+    deltatime = delta_time(start_time, end_time)
+    return deltatime, total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados
 
 
 def req_7(control):
