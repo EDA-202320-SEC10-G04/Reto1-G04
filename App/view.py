@@ -281,13 +281,13 @@ def menu_cycle():
             name_tournament = input(" Ingrese el nombre del Torneo: ")
             start_date = input("Ingrese la fecha de inicio del periodo a consultar (YYYY-MM-DD): ")
             end_date = input("Ingrese la fecha de final del periodo a consultar (YYYY-MM-DD): ")
-            matchs,total_coutries, total_cities, size = controller.queryMatchsbyPeriod(name_tournament, start_date, end_date ,control['model']['goalscore'], control['model']['results'])
+            matchs,total_coutries, total_cities, size , sizematches= controller.queryMatchsbyPeriod(name_tournament, start_date, end_date ,control['model']['goalscore'], control['model']['results'])
             print("========================== Req No. 4 Inputs ===============")
             print(f"tournament name : {name_tournament}")
             print(f"Start date: {start_date}")
             print(f"End date: {end_date}")
             print("========================== Req No. 4 Inputs ===============")
-            print(f"{name_tournament} total countries: ",len(matchs))
+            print(f"{name_tournament} total matches: ",sizematches)
             print(f"{name_tournament} total countries: ",total_coutries)
             print(f"{name_tournament} total cities: ",total_cities)
             if size >= 6:
@@ -312,6 +312,11 @@ def menu_cycle():
             print_annotations_over_a_period_of_time(total_goals, total_tournaments, penalties, own_goals, player_goals)
 
         elif int(inputs) == 7:
+            number_players = int(input("Ingrese el numero de jugadores: "))
+            
+            start_date = input("Ingrese la fecha de inicio del periodo a consultar (YYYY-MM-DD): ")
+            end_date = input("Ingrese la fecha de final del periodo a consultar (YYYY-MM-DD): ")
+
             print_req_6(control)
 
         elif int(inputs) == 8:
