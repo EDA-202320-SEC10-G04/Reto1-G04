@@ -952,32 +952,30 @@ def clasificar_anotadores(data_structs, N, fecha_ini, fecha_fin):
     lista_anotadores = lt.newList('ARRAY_LIST')
     fecha_inicio = datetime.datetime.strptime(fecha_ini, '%Y-%m-%d')
     fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d')
-    goalscorers_sorted = sa.sort(data_structs['goalscore'], cmp_partidos_by_fecha)
-    scorer_data = {}
     partidos_anotadores = {}
-    total_goles = 0 
+    total_anotadores = set()
     total_t = set()
-    total_anotadores = set() 
+    total_goles = 0
+    total_goles_penal = 0
+    total_autogoles = 0
+    scorer_data = {}
+
     for result in lt.iterator(data_structs['results']):
         result_date = datetime.datetime.strptime(result['date'], '%Y-%m-%d')
         if fecha_inicio <= result_date <= fecha_fin and result['tournament'] != 'Friendly':
             partido_unique_key = (result['date'], result['home_team'], result['away_team'])
-             
-            winner = result['home_team']
-            if result['home_score'] < result['away_score']:
-                winner = result['away_team']
-            elif result['home_score'] == result['away_score']:
-                winner = 'tie'
-           
-            for scorer in lt.iterator(goalscorers_sorted):
+            winner = result['home_team'] if result['home_score'] > result['away_score'] else result['away_team'] if result['home_score'] < result['away_score'] else 'tie'
+
+            if result['tournament']:
+                total_t.add(result['tournament'])
+
+            for scorer in lt.iterator(data_structs['goalscore']):
                 jugador = scorer['scorer']
-                if jugador in scorer_data:
-                    a = scorer_data[jugador]
-                else:
-                    new_goal_scorer = {
+                if jugador not in scorer_data:
+                    scorer_data[jugador] = {
                         'scorer': jugador,
                         'total_points': 0,
-                        'total_goals': 0,  # Inicializar el total de goles para cada jugador
+                        'total_goals': 0,
                         'penalty_goals': 0,
                         'own_goals': 0,
                         'avg_time (min)': 0,
@@ -988,56 +986,44 @@ def clasificar_anotadores(data_structs, N, fecha_ini, fecha_fin):
                         'last_goal': None,
                         'total_games': 0
                     }
-                    scorer_data[jugador] = new_goal_scorer
-                    a = new_goal_scorer
 
-                if (
-                    result['date'] == scorer['date'] and
-                    (result['home_team'] == scorer['home_team'] or result['away_team'] == scorer['away_team'])
-                ):
-                    total_anotadores.add(jugador)  # Agregar al conjunto de jugadores anotadores únicos
-                    if jugador in partidos_anotadores:
-                        if partido_unique_key not in partidos_anotadores[jugador]:
-                            partidos_anotadores[jugador].add(partido_unique_key)
-                            a['total_goals'] += 1  # Incrementar el total de goles para este jugador
-                            total_goles += 1  # Incrementar el total de goles en total
-                    else:
-                        partidos_anotadores[jugador] = {partido_unique_key}
-                        a['total_goals'] += 1  # Incrementar el total de goles para este jugador
-                        total_goles += 1  # Incrementar el total de goles en total
-                      
-                    a['total_points'] += 1
+                if result['date'] == scorer['date'] and (result['home_team'] == scorer['home_team'] or result['away_team'] == scorer['away_team']):
+                    total_anotadores.add(jugador)
+                    if jugador not in partidos_anotadores:
+                        partidos_anotadores[jugador] = set()
+                    if partido_unique_key not in partidos_anotadores[jugador]:
+                        partidos_anotadores[jugador].add(partido_unique_key)
+                        scorer_data[jugador]['total_goals'] += 1
+                        total_goles += 1
+
+                    scorer_data[jugador]['total_points'] += 1
 
                     if scorer['penalty'] == 'True':
-                        a['penalty_goals'] += 1
-                        a['total_points'] += 1
+                        scorer_data[jugador]['penalty_goals'] += 1
+                        scorer_data[jugador]['total_points'] += 1
+                        total_goles_penal += 1
                     if scorer['own_goal'] == 'True':
-                        a['own_goals'] += 1
-                        a['total_points'] -= 1
+                        scorer_data[jugador]['own_goals'] += 1
+                        scorer_data[jugador]['total_points'] -= 1
+                        total_autogoles += 1
                     if scorer['minute']:
                         minuto = float(scorer['minute'])
+                        a = scorer_data[jugador]
                         if 'avg_time (min)' not in a:
                             a['avg_time (min)'] = minuto
                             a['total_games'] = 1
                         else:
-                            a['avg_time (min)'] = (a['avg_time (min)'] * a['total_games'] + minuto) / (
-                                    a['total_games'] + 1)
+                            a['avg_time (min)'] = (a['avg_time (min)'] * a['total_games'] + minuto) / (a['total_games'] + 1)
                             a['total_games'] += 1
 
-                    total_torneos = set()
-                    if result['tournament']:
-                        total_torneos.add(result['tournament'])
-                        total_t.add(result['tournament'])
-                    a['total_tournaments'] = len(total_torneos)
-
                     if winner == 'tie':
-                        a['scored_in_draws'] += 1
+                        scorer_data[jugador]['scored_in_draws'] += 1
                     elif winner == jugador:
-                        a['scored_in_wins'] += 1
+                        scorer_data[jugador]['scored_in_wins'] += 1
                     else:
-                        a['scored_in_loses'] += 1
+                        scorer_data[jugador]['scored_in_loses'] += 1
 
-                    a['last_goal'] = {
+                    scorer_data[jugador]['last_goal'] = {
                         'date': result['date'],
                         'tournament': result['tournament'],
                         'home_team': result['home_team'],
@@ -1049,19 +1035,15 @@ def clasificar_anotadores(data_structs, N, fecha_ini, fecha_fin):
                         'own_goal': scorer['own_goal']
                     }
 
-    # Cálculo de estadísticas después de recorrer todos los resultados y goleadores
-    total_goles_penal = 0
-    total_autogoles = 0
-
     for a in scorer_data.values():
-        total_goles_penal += float(a.get('penalty_goals', 0))
-        total_autogoles += float(a.get('own_goals', 0))
         lt.addLast(lista_anotadores, a)
 
-    lista_anotadores = sa.sort(lista_anotadores, comparar_anotadores)
+    lista_anotadores = merg.sort(lista_anotadores, comparar_anotadores)
     lista_anotadores = lt.subList(lista_anotadores, 1, N)
 
     return len(total_anotadores), len(partidos_anotadores), len(total_t), total_goles, total_goles_penal, total_autogoles, lista_anotadores
+
+
 
 
 
