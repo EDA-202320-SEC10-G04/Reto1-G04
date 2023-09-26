@@ -361,7 +361,7 @@ def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results
             lt.addLast(newarray,element)
         
 
-
+    g = newarray
     total_coutries = len(find_repeated(newarray,'country'))
     total_cities= len(find_repeated(newarray,'city'))
     size = lt.size(newarray)
@@ -474,10 +474,33 @@ def searchnameBinary(data, goal, key, goal2, key2):
     while low<= high:
         mid = (low + high) // 2
         f=lt.getElement(data,mid)[key].lower()
-        if lt.getElement(data,mid)[key].lower()  ==goal.lower() and lt.getElement(data,mid)[key2].lower() == goal2.lower():
-            x = mid
-            return x
-        elif lt.getElement(data,mid)[key].lower() <goal.lower() or  (lt.getElement(data,mid)[key].lower() == goal.lower() and  lt.getElement(data,mid)[key2].lower() <goal2.lower()):
+        if lt.getElement(data,mid)[key].lower()  ==goal.lower() :
+            if lt.getElement(data,mid)[key2].lower() == goal2.lower():
+                x = mid
+                return x
+            else:
+                work =True
+                while work:
+                     #buscamos en la izquierda mas ocurrencias
+                    if lt.getElement(data,mid)[key].lower()  ==goal.lower():
+                        mid-=1
+                    else:
+                        work = False
+                        x = mid+1
+                    #buscamos mas iteraciones a la izquierda
+                working = True
+                while working:
+                    if lt.getElement(data,x)[key].lower()  ==goal.lower():
+                        if lt.getElement(data,x)[key2].lower() == goal2.lower():
+                            return x
+                    if lt.getElement(data,x)[key].lower()  ==goal.lower():
+                            x+=1
+                    else:
+                        working = False
+
+        elif lt.getElement(data,mid)[key].lower() <goal.lower():
+            #and lt.getElement(data,mid)[key2].lower() == goal2.lower()s
+            #(lt.getElement(data,mid)[key].lower() == goal.lower() and  lt.getElement(data,mid)[key2].lower() <goal2.lower()):
             #partido["local"] < local or (partido["local"] == local and partido["visitante"] < visitante):
             low = mid+1
             
