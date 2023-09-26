@@ -413,9 +413,27 @@ def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
     return recursive_goals(goals, player_goals, total_goals, 0)
 
 #Req 3
-def req_3(data_structs):
-    pass
-#Req 4
+def iter_consultar_partidos_equipo_periodo(data_structs, team_name, fecha_inicio, fecha_fin):
+    
+    
+    sa.sort(data_structs["goalscore"], cmp_date_and_minute)
+    total_games = 0
+    total_home_games = 0
+    total_away_games = 0
+    fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d')
+    fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d')
+
+    for partido in lt.iterator(data_structs["goalscore"]):
+        goal_date = datetime.datetime.strptime(partido['date'], '%Y-%m-%d')
+        if fecha_inicio <= goal_date <= fecha_fin and partido["team"].lower() == team_name.lower():
+            total_games += 1
+            if partido["home_team"] == partido["team"]:
+                total_home_games += 1
+            if partido["away_team"] == partido["team"]:
+                total_away_games += 1
+    return total_games , total_home_games, total_away_games
+
+#req4
 def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results):
     """
     Función que soluciona el requerimiento 4
