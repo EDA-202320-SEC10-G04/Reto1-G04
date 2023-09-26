@@ -412,8 +412,10 @@ def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
 
     return recursive_goals(goals, player_goals, total_goals, 0)
 
-#Req 3
+#Requerimiento 3
 def iter_consultar_partidos_equipo_periodo(data_structs, team_name, fecha_inicio, fecha_fin):
+    
+    games_played = lt.newList("ARRAY_LIST")
     
     
     sa.sort(data_structs["goalscore"], cmp_date_and_minute)
@@ -427,11 +429,30 @@ def iter_consultar_partidos_equipo_periodo(data_structs, team_name, fecha_inicio
         goal_date = datetime.datetime.strptime(partido['date'], '%Y-%m-%d')
         if fecha_inicio <= goal_date <= fecha_fin and partido["team"].lower() == team_name.lower():
             total_games += 1
+            tournament, country, city = buscar_pais(data_structs["results"],partido['date'], partido['home_team'], partido['away_team'])
+            
             if partido["home_team"] == partido["team"]:
                 total_home_games += 1
             if partido["away_team"] == partido["team"]:
                 total_away_games += 1
-    return total_games , total_home_games, total_away_games
+            
+            partido["tournament"] = tournament 
+            partido["country"] = country
+            partido["city"] = city
+            lt.addLast(games_played, partido)
+    return total_games , total_home_games, total_away_games, games_played
+
+def buscar_pais(results, goal_date, home_team, away_team):
+    """
+    Busca el nombre del torneo, pais y ciudad en la lista de resultados según la fecha y los equipos.
+    """
+    for result in lt.iterator(results):
+        result_date = datetime.datetime.strptime(result['date'], '%Y-%m-%d')
+        if result_date == datetime.datetime.strptime(goal_date, '%Y-%m-%d') and result['home_team'] == home_team and result['away_team'] == away_team:
+            return result['tournament'], result['country'] , result["city"]
+    return 'Desconocido'
+
+
 
 #req4
 def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results):

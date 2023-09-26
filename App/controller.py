@@ -135,10 +135,14 @@ def get_first_n_goals_by_player(control, player_name, n, recursive=True):
 
 
 def consulta_partidos_equipo_periodo(control, team_name, fecha_inicio,fecha_fin):
+    
+    start_time = get_time()
     data_structs = control["model"]
-    total_games , total_home_games, total_away_games = model.iter_consultar_partidos_equipo_periodo(data_structs, team_name,
+    total_games , total_home_games, total_away_games, games_played = model.iter_consultar_partidos_equipo_periodo(data_structs, team_name,
                                                                                                     fecha_inicio, fecha_fin)
-    return total_games , total_home_games, total_away_games
+    end_time = get_time()
+    deltatime = delta_time(start_time, end_time)
+    return deltatime, total_games , total_home_games, total_away_games, games_played
 
 #req 4
 def queryMatchsbyPeriod(name_tournament, start_date, end_date, goalscore, results):

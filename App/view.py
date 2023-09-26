@@ -137,7 +137,7 @@ def print_first_n_goals_by_player(total_goals, player_goals):
 
 
 
-def print_games_over_a_period_of_time(total_games, total_home_games, total_away_games):
+def print_games_over_a_period_of_time(total_games, total_home_games, total_away_games, games_played):
     """ Función que imprime los partidos, en un periodo de tiempo específico
 
     Args:
@@ -149,7 +149,19 @@ def print_games_over_a_period_of_time(total_games, total_home_games, total_away_
     print(f"Total de partidos jugados por el equipo como local: {total_home_games}")
     print(f"Total de partidos jugados por el equipo como visitante: {total_away_games}")     
     print("Detalles de los goles:")
+    
+    if total_games > 0:
+        keys = ['date','home_team','away_team','country','city','tournament', 'penalty','own_goal']
 
+        
+
+        if total_games > 6:
+            games_played = controller.sixdata(games_played)
+         
+        printSimpleTable(games_played,keys)
+         
+    else:
+        print("No se encontraron goles para el jugador especificado.")
 
 def print_req_4(control):
     """
@@ -374,10 +386,10 @@ def menu_cycle():
             fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD):")
             fecha_fin = input("ingrese la fecha de fin (YYYY-MM-DD):")
             print("========================= Req No.3 Results ==================")
-            total_games, total_home_games, total_away_games = controller.consulta_partidos_equipo_periodo(control, team_name,
+            time, total_games, total_home_games, total_away_games, games_played = controller.consulta_partidos_equipo_periodo(control, team_name,
                                                                                                           fecha_inicio, fecha_fin)
-            
-            print_games_over_a_period_of_time(total_games, total_home_games, total_away_games)
+            print("Delta de tiempo fue:", str(time))
+            print_games_over_a_period_of_time(total_games, total_home_games, total_away_games, games_played)
 
         elif int(inputs) == 5:
             """PConsultar los partidos relacionados
