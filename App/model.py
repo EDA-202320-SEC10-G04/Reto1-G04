@@ -397,7 +397,7 @@ def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results
             lt.addLast(newarray,element)
         
 
-
+    g = newarray
     total_coutries = len(find_repeated(newarray,'country'))
     total_cities= len(find_repeated(newarray,'city'))
     size = lt.size(newarray)
@@ -415,8 +415,8 @@ def find_repeated(data,key):
     return list_repeated
 
 def filterbyPeriod(data, stardate, end_date):
-    stardate = stardate.split('-')[0]
-    end_date = end_date.split('-')[0]
+    stardate= datetime.datetime.strptime(stardate,"%Y-%m-%d")
+    end_date = datetime.datetime.strptime(end_date,"%Y-%m-%d")
     newArray = lt.newList('ARRAY_LIST')
     array = sa.sort(data,cmp_fecha_país_mayor_menor)
     low = searchMin(array,end_date, 'date')
@@ -443,13 +443,22 @@ def searchMax(data, goal,key ):
 
     while low<= high:
         mid = (low + high) // 2
-        
-        if lt.getElement(data,mid)[key].split('-')[0]  ==goal :
+        f= datetime.datetime.strptime(lt.getElement(data,mid)[key],"%Y-%m-%d" )
+        z = data
+        if f  ==goal :
             low = mid+1
-        elif lt.getElement(data,mid)[key].split('-')[0]  >goal :
+        elif f >goal :
             low = mid+1
         else:
-            high= mid-1
+            work = True
+            while work:
+                w= datetime.datetime.strptime(lt.getElement(data,low)[key],"%Y-%m-%d" )
+                if datetime.datetime.strptime(lt.getElement(data,low)[key],"%Y-%m-%d" ) >goal:
+                    low+= 1
+                else:
+                    work=False
+                    return low-1
+            
 
     return  low
 
@@ -459,25 +468,41 @@ def searchMin(data, goal,key):
     result = -1  # Inicializamos el resultado en -1, lo que significa que no se encontró el elemento
 
     while left <= right:
-        mid = left + (right - left) // 2  # Calculamos el punto medio
+        mid = (right - left) // 2  # Calculamos el punto medio
         
-        f=lt.getElement(data,mid)[key].split('-')[0] 
+        f= datetime.datetime.strptime(lt.getElement(data,mid)[key],"%Y-%m-%d" )
         
-        if lt.getElement(data,mid)[key].split('-')[0]  ==  goal:
-            result = mid  # Actualizamos el resultado si encontramos el elemento
-            right = mid - 1  # Continuamos buscando en la mitad izquierda
-        elif lt.getElement(data,mid)[key].split('-')[0]  > goal:
-            left = mid + 1  # Descartamos la mitad izquierda
-            result = mid + 1
+        if f ==  goal:
+            return mid
+             # Continuamos buscando en la mitad izquierda
+        elif f  < goal:
+            right = mid - 1  # Descartamos la mitad izquierda
+            
         else:
-            right = mid - 1  # Descartamos la mitad derecha
+            work = True
+            while work:
+                w= datetime.datetime.strptime(lt.getElement(data,right)[key],"%Y-%m-%d" )
+                if datetime.datetime.strptime(lt.getElement(data,right)[key],"%Y-%m-%d" ) <goal:
+                    right-= 1
+                else:
+                    work=False
+                    return right+1
+
+
+
+            
+            # Descartamos la mitad derecha
 
     return result
 
 def sortmatchAlphabet(data):
-    sa.sort(data, compare_countryMoretoLess)
+   
     sa.sort(data, cmp_fecha_país_mayor_menor)
     return data
+
+def lenght(data):
+    return lt.size(data)
+
 #search name binary
 def searchnameBinary(data, goal, key, goal2, key2):
     low, high = 0 , lt.size(data)
@@ -485,10 +510,33 @@ def searchnameBinary(data, goal, key, goal2, key2):
     while low<= high:
         mid = (low + high) // 2
         f=lt.getElement(data,mid)[key].lower()
-        if lt.getElement(data,mid)[key].lower()  ==goal.lower() and lt.getElement(data,mid)[key2].lower() == goal2.lower():
-            x = mid
-            return x
-        elif lt.getElement(data,mid)[key].lower() <goal.lower() or  (lt.getElement(data,mid)[key].lower() == goal.lower() and  lt.getElement(data,mid)[key2].lower() <goal2.lower()):
+        if lt.getElement(data,mid)[key].lower()  ==goal.lower() :
+            if lt.getElement(data,mid)[key2].lower() == goal2.lower():
+                x = mid
+                return x
+            else:
+                work =True
+                while work:
+                     #buscamos en la izquierda mas ocurrencias
+                    if lt.getElement(data,mid)[key].lower()  ==goal.lower():
+                        mid-=1
+                    else:
+                        work = False
+                        x = mid+1
+                    #buscamos mas iteraciones a la izquierda
+                working = True
+                while working:
+                    if lt.getElement(data,x)[key].lower()  ==goal.lower():
+                        if lt.getElement(data,x)[key2].lower() == goal2.lower():
+                            return x
+                    if lt.getElement(data,x)[key].lower()  ==goal.lower():
+                            x+=1
+                    else:
+                        working = False
+
+        elif lt.getElement(data,mid)[key].lower() <goal.lower():
+            #and lt.getElement(data,mid)[key2].lower() == goal2.lower()s
+            #(lt.getElement(data,mid)[key].lower() == goal.lower() and  lt.getElement(data,mid)[key2].lower() <goal2.lower()):
             #partido["local"] < local or (partido["local"] == local and partido["visitante"] < visitante):
             low = mid+1
             
