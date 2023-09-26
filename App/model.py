@@ -412,7 +412,6 @@ def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
 
     return recursive_goals(goals, player_goals, total_goals, 0)
 
-<<<<<<< HEAD
 #Requerimiento 3
 def iter_consultar_partidos_equipo_periodo(data_structs, team_name, fecha_inicio, fecha_fin):
     
@@ -457,13 +456,6 @@ def buscar_pais(results, goal_date, home_team, away_team):
 
 #req4
 def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results):
-=======
-#Req 3
-def req_3(data_structs):
-    pass
-#Req 5
-def queryMatchsbyPeriod(name_tournament, start_date, end_date,shootouts, results):
->>>>>>> Carlos
     """
     Función que soluciona el requerimiento 4
     """
