@@ -173,8 +173,16 @@ def cmp_partidos_by_fecha_y_pais(resultado1, resultado2):
         country1 = resultado1['home_team']
         country2 = resultado2['home_team']
         return country1 < country2
-        
+def cmp_partidos_by_fecha(resultado1, resultado2):
+    """
+    Devuelve verdadero (True) si la fecha del resultado1 es menor que en el resultado2
+    """
+    date_format = "%Y-%m-%d"
+    date1 = datetime.datetime.strptime(resultado1['date'], date_format)
+    date2 = datetime.datetime.strptime(resultado2['date'], date_format)
 
+    if date1 != date2:
+        return date1 < date2
        
 def compare_home(data1, data2):
     team1 = data1['home_team'].lower()
@@ -190,7 +198,6 @@ def compare_away(data1, data2):
         return True
     elif team1 > team2:
         return False
-<<<<<<< HEAD
 #req 6
 def cmp_total_p(equipo1, equipo2):
     """
@@ -222,10 +229,48 @@ def cmp_total_p(equipo1, equipo2):
                         return False
                     else:
                         return True
+def comparar_anotadores(anotador1, anotador2):
+    # Obtener los valores relevantes para la comparación de cada anotador
+    puntos1 = anotador1['total_points']
+    total_goles1 = anotador1['total_points'] - anotador1['penalty_goals'] - anotador1['own_goals']
+    goles_penal1 = anotador1['penalty_goals']
+    autogoles1 = anotador1['own_goals']
+    tiempo_promedio1 = anotador1['avg_time (min)']
 
+    puntos2 = anotador2['total_points']
+    total_goles2 = anotador2['total_points'] - anotador2['penalty_goals'] - anotador2['own_goals']
+    goles_penal2 = anotador2['penalty_goals']
+    autogoles2 = anotador2['own_goals']
+    tiempo_promedio2 = anotador2['avg_time (min)']
+
+    # Comparar según el criterio compuesto
+    if puntos1 > puntos2:
+        return True
+    elif puntos1 < puntos2:
+        return False
+    else:
+        if total_goles1 > total_goles2:
+            return True
+        elif total_goles1 < total_goles2:
+            return False
+        else:
+            if goles_penal1 > goles_penal2:
+                return True
+            elif goles_penal1 < goles_penal2:
+                return False
+            else:
+                if autogoles1 < autogoles2:
+                    return True
+                elif autogoles1 > autogoles2:
+                    return False
+                else:
+                    if tiempo_promedio1 < tiempo_promedio2:
+                        return True
+                    elif tiempo_promedio1 > tiempo_promedio2:
+                        return False
+                    else:
+                        return False  # Igualdad en todos los criterios
 #req1
-=======
->>>>>>> origin/Carlos
 
 def compare_country(data1, data2):
     team1 = data1['country'].lower()
@@ -370,7 +415,7 @@ def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
 #Req 3
 def req_3(data_structs):
     pass
-#Req 5
+#Req 4
 def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results):
     """
     Función que soluciona el requerimiento 4
@@ -767,7 +812,7 @@ def obtener_max_goleador(data_structs, equipo_nombre):
         if gol['minute']:
             minuto = float(gol['minute'])
 
-        # Verifica si el gol pertenece al equipo y si el jugador ha anotado más goles
+
         if equipo_nombre == equipo_local or equipo_nombre == equipo_visitante:
             if equipo_nombre == equipo_anotador:
                 if jugador_anotador != '' :
@@ -850,8 +895,133 @@ def obtener_ciudad_mas_partidos(results):
     
     return ciudad_mas_partidos
 
-def req_7():
-    pass
+#####REQ 7
+
+                
+
+
+def clasificar_anotadores(data_structs, N, fecha_ini, fecha_fin):
+    lista_anotadores = lt.newList('ARRAY_LIST')
+    fecha_inicio = datetime.datetime.strptime(fecha_ini, '%Y-%m-%d')
+    fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d')
+    goalscorers_sorted = sa.sort(data_structs['goalscore'], cmp_partidos_by_fecha)
+    scorer_data = {}
+    partidos_anotadores = {}
+    total_goles = 0 
+    total_partidos = set() 
+    total_anotadores = set() 
+    for result in lt.iterator(data_structs['results']):
+        result_date = datetime.datetime.strptime(result['date'], '%Y-%m-%d')
+        if fecha_inicio <= result_date <= fecha_fin and result['tournament'] != 'Friendly':
+            partido_unique_key = (result['date'], result['home_team'], result['away_team'])
+             
+            winner = result['home_team']
+            if result['home_score'] < result['away_score']:
+                winner = result['away_team']
+            elif result['home_score'] == result['away_score']:
+                winner = 'tie'
+           
+            for scorer in lt.iterator(goalscorers_sorted):
+                jugador = scorer['scorer']
+                if jugador in scorer_data:
+                    a = scorer_data[jugador]
+                else:
+                    new_goal_scorer = {
+                        'scorer': jugador,
+                        'total_points': 0,
+                        'total_goals': 0,  # Inicializar el total de goles para cada jugador
+                        'penalty_goals': 0,
+                        'own_goals': 0,
+                        'avg_time (min)': 0,
+                        'total_tournaments': 0,
+                        'scored_in_wins': 0,
+                        'scored_in_loses': 0,
+                        'scored_in_draws': 0,
+                        'last_goal': None,
+                        'total_games': 0
+                    }
+                    scorer_data[jugador] = new_goal_scorer
+                    a = new_goal_scorer
+
+                if (
+                    result['date'] == scorer['date'] and
+                    (result['home_team'] == scorer['home_team'] or result['away_team'] == scorer['away_team'])
+                ):
+                    total_anotadores.add(jugador)  # Agregar al conjunto de jugadores anotadores únicos
+                    if jugador in partidos_anotadores:
+                        if partido_unique_key not in partidos_anotadores[jugador]:
+                            partidos_anotadores[jugador].add(partido_unique_key)
+                            a['total_goals'] += 1  # Incrementar el total de goles para este jugador
+                            total_goles += 1  # Incrementar el total de goles en total
+                    else:
+                        partidos_anotadores[jugador] = {partido_unique_key}
+                        a['total_goals'] += 1  # Incrementar el total de goles para este jugador
+                        total_goles += 1  # Incrementar el total de goles en total
+                      
+                    a['total_points'] += 1
+
+                    if scorer['penalty'] == 'True':
+                        a['penalty_goals'] += 1
+                        a['total_points'] += 1
+                    if scorer['own_goal'] == 'True':
+                        a['own_goals'] += 1
+                        a['total_points'] -= 1
+                    if scorer['minute']:
+                        minuto = float(scorer['minute'])
+                        if 'avg_time (min)' not in a:
+                            a['avg_time (min)'] = minuto
+                            a['total_games'] = 1
+                        else:
+                            a['avg_time (min)'] = (a['avg_time (min)'] * a['total_games'] + minuto) / (
+                                    a['total_games'] + 1)
+                            a['total_games'] += 1
+
+                    total_torneos = set()
+                    if result['tournament']:
+                        total_torneos.add(result['tournament'])
+                    a['total_tournaments'] = len(total_torneos)
+
+                    if winner == 'tie':
+                        a['scored_in_draws'] += 1
+                    elif winner == jugador:
+                        a['scored_in_wins'] += 1
+                    else:
+                        a['scored_in_loses'] += 1
+
+                    a['last_goal'] = {
+                        'date': result['date'],
+                        'tournament': result['tournament'],
+                        'home_team': result['home_team'],
+                        'away_team': result['away_team'],
+                        'home_score': result['home_score'],
+                        'away_score': result['away_score'],
+                        'minute': scorer['minute'],
+                        'penalty': scorer['penalty'],
+                        'own_goal': scorer['own_goal']
+                    }
+
+    # Cálculo de estadísticas después de recorrer todos los resultados y goleadores
+    total_goles_penal = 0
+    total_autogoles = 0
+
+    for a in scorer_data.values():
+        total_goles_penal += float(a.get('penalty_goals', 0))
+        total_autogoles += float(a.get('own_goals', 0))
+        lt.addLast(lista_anotadores, a)
+
+    lista_anotadores = sa.sort(lista_anotadores, comparar_anotadores)
+    lista_anotadores = lt.subList(lista_anotadores, 1, N)
+
+    return len(total_anotadores), len(partidos_anotadores), len(total_torneos), total_goles, total_goles_penal, total_autogoles, lista_anotadores
+
+
+
+
+                    
+        
+        
+    
+
 
 
 

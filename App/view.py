@@ -223,13 +223,69 @@ def print_consultar_anotaciones_jugador_periodo(torneo_nombre, total_equipos, to
         print("No se encontraron goles para el jugador especificado.")
 
 
-    
-def print_req_7(control):
-    """
-        Función que imprime la solución del Requerimiento 7 en consola
-    """
-    # TODO: Imprimir el resultado del requerimiento 7
-    pass
+ #REQ 7   
+
+
+def print_clasificar_anotadores(total_anotadores, total_partidos, total_torneos, total_goles, total_goles_penal, total_autogoles, lista_anotadores):
+    print("Clasificación de los mejores anotadores:")
+    print(f"Total de anotadores encontrados: {total_anotadores}")
+    print(f"Total de partidos en que participaron los anotadores: {total_partidos}")
+    print(f"Total de torneos en que participaron los anotadores: {total_torneos}")
+    print(f"Total de goles anotados durante el período: {total_goles}")
+    print(f"Total de goles por penal anotados durante el período: {total_goles_penal}")
+    print(f"Total de autogoles anotados durante el período: {total_autogoles}")
+
+    if total_anotadores > 0:
+        keys = [
+                        'scorer',
+                        'total_points',
+                        'total_goals',
+                        'penalty_goals',
+                        'own_goals',
+                        'avg_time (min)',
+                        'total_tournaments',
+                        'scored_in_wins',
+                        'scored_in_loses',
+                        'scored_in_draws',
+                        'last_goal' 
+        ]
+
+        if  total_anotadores > 6:
+            lista_anotadores = controller.sixdata(lista_anotadores)
+
+        # Crear una tabla para los equipos clasificados
+        equipos_table = PrettyTable()
+        equipos_table.field_names = keys
+        equipos_table.horizontal_char = '-'
+        equipos_table.hrules =ALL
+        equipos_table.field_names = keys
+        # Recorrer los equipos clasificados y agregarlos a la tabla
+
+        for equipo in lt.iterator(lista_anotadores):
+            last_goal_data = equipo['last_goal']  
+            last_goal_table = PrettyTable()  # Crear una tabla para el máximo goleador
+            last_goal_keys = ['date',
+                        'tournament',
+                       'home_team',
+                       'away_team',
+                        'home_score',
+                        'away_score',
+                        'minute',
+                        'penalty',
+                        'own_goal']
+            
+            # Agregar los datos del máximo goleador a la tabla del máximo goleador
+            last_goal_table.field_names = last_goal_keys
+            last_goal_table.add_row([last_goal_data.get(key, '') for key in last_goal_keys])
+            
+            # Agregar una fila en la tabla de equipos con la tabla del máximo goleador
+            equipo_data = [equipo[key] if key != 'last_goal' else str(last_goal_table) for key in keys]
+            equipos_table.add_row(equipo_data)
+            
+        # Imprimir la tabla de equipos clasificados
+        print(equipos_table)
+    else:
+        print("No se encontraron goles para el jugador especificado.")
 
 
 def print_req_8(control):
@@ -313,6 +369,7 @@ def menu_cycle():
             """PConsultar los partidos relacionados
              con un torneo durante un
             periodo especifico."""
+            print("========================== Req No. 4 Inputs ===============")
             name_tournament = input(" Ingrese el nombre del Torneo: ")
             start_date = input("Ingrese la fecha de inicio del periodo a consultar (YYYY-MM-DD): ")
             end_date = input("Ingrese la fecha de final del periodo a consultar (YYYY-MM-DD): ")
@@ -354,14 +411,25 @@ def menu_cycle():
             fecha_fin = input("Ingrese la fecha de fin (YYYY-MM-DD): ")
             
             print("========================= Req No.6 Results ==================")
-            time, total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados= controller.req_6(
+            time, total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados= controller.consultar_mejores_equipos(
            control, N, torneo_nombre, fecha_inicio, fecha_fin)
             print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
             print_consultar_anotaciones_jugador_periodo(torneo_nombre, total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados)
 
 
         elif int(inputs) == 8:
-            print_req_7(control)
+            print("========================== Req No. 7 Inputs ===============")
+           
+            N = int(input("Ingrese el número de partidos"))
+            fecha_inicio = input("Ingrese la fecha de inicio (YYYY-MM-DD): ")
+            fecha_fin = input("Ingrese la fecha de fin (YYYY-MM-DD): ")
+            
+            print("========================= Req No.7 Results ==================")
+            time, total_anotadores, total_partidos, total_torneos, total_goles, total_goles_penal,  total_autogoles, lista_anotadores= controller.clasificar_anotadores(
+           control, N, fecha_inicio, fecha_fin)
+            print("Para calcular los n goles por jugador, delta tiempo fue:", str(time))
+            print_clasificar_anotadores( total_anotadores, total_partidos, total_torneos, total_goles, total_goles_penal,  total_autogoles, lista_anotadores)
+
 
 
         elif int(inputs) == 9:

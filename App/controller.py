@@ -166,7 +166,7 @@ def consultar_anotaciones_jugador_periodo(control, jugador_nombre, fecha_inicio,
     
     return deltatime, total_goals, total_tournaments, penalties, own_goals, player_goals
 
-def req_6(control, N, torneo_nombre, fecha_inicio, fecha_fin):
+def consultar_mejores_equipos(control, N, torneo_nombre, fecha_inicio, fecha_fin):
     data_structs = control['model']
     start_time = get_time()
     total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados = model.consultar_mejores_equipos(data_structs, N, torneo_nombre, 
@@ -176,13 +176,14 @@ def req_6(control, N, torneo_nombre, fecha_inicio, fecha_fin):
     return deltatime, total_equipos, total_encuentros, total_paises, total_ciudades, ciudad_mas_partidos, equipos_clasificados
 
 
-def req_7(control):
-    """
-    Retorna el resultado del requerimiento 7
-    """
-    # TODO: Modificar el requerimiento 7
-    pass
-
+def clasificar_anotadores(data_structs, N,  fecha_inicio, fecha_fin):
+    data_structs =data_structs['model']
+    start_time = get_time()
+    total_anotadores, total_partidos, total_torneos, total_goles, total_goles_penal,  total_autogoles, lista_anotadores = model.clasificar_anotadores(data_structs, N,  
+                                                                                                                                               fecha_inicio, fecha_fin)
+    end_time = get_time()
+    deltatime = delta_time(start_time, end_time)
+    return deltatime, total_anotadores, total_partidos, total_torneos, total_goles, total_goles_penal,  total_autogoles, lista_anotadores
 
 def req_8(control):
     """
