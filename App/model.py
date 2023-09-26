@@ -412,6 +412,7 @@ def recurs_get_first_n_goals_by_player(data_structs, player_name, n):
 
     return recursive_goals(goals, player_goals, total_goals, 0)
 
+<<<<<<< HEAD
 #Requerimiento 3
 def iter_consultar_partidos_equipo_periodo(data_structs, team_name, fecha_inicio, fecha_fin):
     
@@ -456,128 +457,55 @@ def buscar_pais(results, goal_date, home_team, away_team):
 
 #req4
 def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results):
+=======
+#Req 3
+def req_3(data_structs):
+    pass
+#Req 5
+def queryMatchsbyPeriod(name_tournament, start_date, end_date,shootouts, results):
+>>>>>>> Carlos
     """
     Función que soluciona el requerimiento 4
     """
-    r = lt.newList('ARRAY_LIST')
-    Goals = filterbyPeriod(goalscore,start_date, end_date)
-    Results = filterbyPeriod(results,start_date, end_date)
-    Tmatchs = findMatch(name_tournament, Results)
-    sa.sort(Goals,compare_away)
-    goals =sa.sort(Goals,compare_home)
     newarray = lt.newList('ARRAY_LIST')
-    for element in lt.iterator(Tmatchs):
-        f= searchnameBinary(goals, element['home_team'],'home_team',element['away_team'],'away_team')
-
-        
-        if f !=-1 :
-            a=  lt.getElement(goals,f)['away_team']
-            c = lt.getElement(goals,f)['home_team']
-            z =lt.getElement(goals,f)
-            if element['home_score'] == element['away_score']:
-                element['winner'] = z['team']
-            else:
-                element['winner'] = 'Unknown'
-            lt.addLast(newarray,element)
-        
-
-    g = newarray
-    total_coutries = len(find_repeated(newarray,'country'))
-    total_cities= len(find_repeated(newarray,'city'))
-    size = lt.size(newarray)
-    return newarray, total_coutries, total_cities,size
-
-    
-
-def find_repeated(data,key):
-    
-    list_repeated = []
-    for element in lt.iterator(data):
-        if element[key] not in list_repeated:
-            list_repeated.append(element[key])
-       
-    return list_repeated
-
-def filterbyPeriod(data, stardate, end_date):
-    stardate= datetime.datetime.strptime(stardate,"%Y-%m-%d")
+    goals =sa.sort(shootouts,compare_home)
+    total_paises = set()
+    total_ciudades = set()
+    sa.sort(shootouts,compare_away)
+    start_date= datetime.datetime.strptime(start_date,"%Y-%m-%d")
     end_date = datetime.datetime.strptime(end_date,"%Y-%m-%d")
-    newArray = lt.newList('ARRAY_LIST')
-    array = sa.sort(data,cmp_fecha_país_mayor_menor)
-    low = searchMin(array,end_date, 'date')
-    high = searchMax(array,stardate , 'date')
-    while low <= high:
-        lt.addLast(newArray, lt.getElement(array,low))
-        low+=1
+    r = lt.newList('ARRAY_LIST')
+    for i in lt.iterator(results):
+        date = datetime.datetime.strptime(i['date'],"%Y-%m-%d")
+        if date<= end_date and date>= start_date and i['tournament']== name_tournament:
+            country = i['country']
+            city = i['city']
+            total_paises.add(country)
+            total_ciudades.add(city)
+            if i['home_score'] == i['away_score']:
+                winner = buscar_ganador(shootouts, date, i['home_team'], i ['away_team'])
+            else:
+                winner = 'Unknown'
+            i['winner'] = winner
+            lt.addLast(newarray, i)
+
+
+
+
         
-    return newArray
-
-
-
-def findMatch(name_tournament, data):
-    new_array = lt.newList('ARRAY_LIST')
-    for j in lt.iterator( data):
-        if j['tournament'] == name_tournament:
-            lt.addLast(new_array,j)
-    return new_array
-
-# busqueda binaria a la dereca
-
-def searchMax(data, goal,key ):
-    low, high = 0 , lt.size(data)
-
-    while low<= high:
-        mid = (low + high) // 2
-        f= datetime.datetime.strptime(lt.getElement(data,mid)[key],"%Y-%m-%d" )
-        z = data
-        if f  ==goal :
-            low = mid+1
-        elif f >goal :
-            low = mid+1
-        else:
-            work = True
-            while work:
-                w= datetime.datetime.strptime(lt.getElement(data,low)[key],"%Y-%m-%d" )
-                if datetime.datetime.strptime(lt.getElement(data,low)[key],"%Y-%m-%d" ) >goal:
-                    low+= 1
-                else:
-                    work=False
-                    return low-1
-            
-
-    return  low
-
-#busqueda binaria a al izquierda
-def searchMin(data, goal,key):
-    left, right = 0, lt.size(data) - 1
-    result = -1  # Inicializamos el resultado en -1, lo que significa que no se encontró el elemento
-
-    while left <= right:
-        mid = (right - left) // 2  # Calculamos el punto medio
         
-        f= datetime.datetime.strptime(lt.getElement(data,mid)[key],"%Y-%m-%d" )
-        
-        if f ==  goal:
-            return mid
-             # Continuamos buscando en la mitad izquierda
-        elif f  < goal:
-            right = mid - 1  # Descartamos la mitad izquierda
-            
-        else:
-            work = True
-            while work:
-                w= datetime.datetime.strptime(lt.getElement(data,right)[key],"%Y-%m-%d" )
-                if datetime.datetime.strptime(lt.getElement(data,right)[key],"%Y-%m-%d" ) <goal:
-                    right-= 1
-                else:
-                    work=False
-                    return right+1
 
 
+    size = lt.size(newarray)
+    return newarray, len(total_paises), len(total_ciudades),size
+def buscar_ganador(shootouts,date, home_team, away_team):
+    winner = 'Unkown'
+    for i in lt.iterator(shootouts):
+        datei = datetime.datetime.strptime(i['date'],"%Y-%m-%d")
+        if date == datei and i['home_team'] == home_team and i['away_team'] == away_team:
+            return i['winner']
 
-            
-            # Descartamos la mitad derecha
 
-    return result
 
 def sortmatchAlphabet(data):
    
@@ -619,9 +547,7 @@ def searchnameBinary(data, goal, key, goal2, key2):
                         working = False
 
         elif lt.getElement(data,mid)[key].lower() <goal.lower():
-            #and lt.getElement(data,mid)[key2].lower() == goal2.lower()s
-            #(lt.getElement(data,mid)[key].lower() == goal.lower() and  lt.getElement(data,mid)[key2].lower() <goal2.lower()):
-            #partido["local"] < local or (partido["local"] == local and partido["visitante"] < visitante):
+            
             low = mid+1
             
         else:
