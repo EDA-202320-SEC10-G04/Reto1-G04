@@ -190,7 +190,6 @@ def compare_away(data1, data2):
         return True
     elif team1 > team2:
         return False
-<<<<<<< HEAD
 #req 6
 def cmp_total_p(equipo1, equipo2):
     """
@@ -224,8 +223,6 @@ def cmp_total_p(equipo1, equipo2):
                         return True
 
 #req1
-=======
->>>>>>> origin/Carlos
 
 def compare_country(data1, data2):
     team1 = data1['country'].lower()
