@@ -113,8 +113,11 @@ def get_data(control, id):
 
 #re1
 def sortName(data, name_team, condition_team, number_matchs):
+    start_time = get_time()
     total_matchs = model.sortName(data, name_team, condition_team, number_matchs)
-    return total_matchs
+    end_time = get_time()
+    deltatime = delta_time(start_time, end_time)
+    return total_matchs, deltatime
 
 #req 2
 def get_first_n_goals_by_player(control, player_name, n, recursive=True):
@@ -143,13 +146,16 @@ def queryMatchsbyPeriod(name_tournament, start_date, end_date, goalscore, result
     """
     Retorna el resultado del requerimiento 4
     """
+    start_time = get_time()
     # TODO: Modificar el requerimiento 4
     matchs, total_coutries, total_cities,size = model.queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results)
     sizematches = model.lenght(matchs)
     sortmatchAlphabet = model.sortmatchAlphabet(matchs)
     
     Tmatchs = sixdata(sortmatchAlphabet)
-    return Tmatchs, total_coutries, total_cities, size, sizematches
+    end_time = get_time()
+    deltatime = delta_time(start_time, end_time)
+    return Tmatchs, total_coutries, total_cities, size, sizematches,deltatime
 
 
 

@@ -259,7 +259,7 @@ def sortName(data,name_team, condition_team, number_matchs):
         f ="home_team"
         indices1, NameSort1= searchname(data,name_team, condition_team, number_matchs,f)
         z ="away_team"
-        indices2, NameSort2= searchname(data,name_team, condition_team, number_matchs,z)      
+        indices2, NameSort2= searchname(data,name_team, condition_team, number_matchs, z)      
     if e==1:
         total_teams = lt.newList('ARRAY_LIST')
         answerSort = lt.newList('ARRAY_LIST')
@@ -284,7 +284,7 @@ def sortName(data,name_team, condition_team, number_matchs):
         return answerSort
  
 
-def searchname(data,name_team,  f):
+def searchname(data,name_team, condition_team, number_matchs,f):
         NameSort = lt.newList('ARRAY_LIST')
         newList = []
         if f=='home_team':
