@@ -956,7 +956,7 @@ def clasificar_anotadores(data_structs, N, fecha_ini, fecha_fin):
     scorer_data = {}
     partidos_anotadores = {}
     total_goles = 0 
-    total_partidos = set() 
+    total_t = set()
     total_anotadores = set() 
     for result in lt.iterator(data_structs['results']):
         result_date = datetime.datetime.strptime(result['date'], '%Y-%m-%d')
@@ -1027,6 +1027,7 @@ def clasificar_anotadores(data_structs, N, fecha_ini, fecha_fin):
                     total_torneos = set()
                     if result['tournament']:
                         total_torneos.add(result['tournament'])
+                        total_t.add(result['tournament'])
                     a['total_tournaments'] = len(total_torneos)
 
                     if winner == 'tie':
@@ -1060,7 +1061,7 @@ def clasificar_anotadores(data_structs, N, fecha_ini, fecha_fin):
     lista_anotadores = sa.sort(lista_anotadores, comparar_anotadores)
     lista_anotadores = lt.subList(lista_anotadores, 1, N)
 
-    return len(total_anotadores), len(partidos_anotadores), len(total_torneos), total_goles, total_goles_penal, total_autogoles, lista_anotadores
+    return len(total_anotadores), len(partidos_anotadores), len(total_t), total_goles, total_goles_penal, total_autogoles, lista_anotadores
 
 
 
