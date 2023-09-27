@@ -452,7 +452,7 @@ def iter_consultar_partidos_equipo_periodo(data_structs, team_name, fecha_inicio
 
 def buscar_penaltis(results, game_date, home_team, away_team):
     """
-    Busca el nombre si hubo penaltis y autogoles en la lista de goles según la fecha y los equipos.
+    Busca si hubo penaltis en la lista de goles según la fecha y los equipos.
     """
     for result in lt.iterator(results):
         result_date = datetime.datetime.strptime(result['date'], '%Y-%m-%d')
@@ -465,7 +465,7 @@ def buscar_penaltis(results, game_date, home_team, away_team):
 
 def buscar_autogoles(results, game_date, home_team, away_team):
     """
-    Busca el nombre si hubo penaltis y autogoles en la lista de goles según la fecha y los equipos.
+    Busca si hubo autogoles en la lista de goles según la fecha y los equipos.
     """
     for result in lt.iterator(results):
         result_date = datetime.datetime.strptime(result['date'], '%Y-%m-%d')
