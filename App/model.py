@@ -501,83 +501,38 @@ def find_repeated(data,key):
 def filterbyPeriod(data, stardate, end_date):
     stardate= datetime.datetime.strptime(stardate,"%Y-%m-%d")
     end_date = datetime.datetime.strptime(end_date,"%Y-%m-%d")
-    newArray = lt.newList('ARRAY_LIST')
-    array = sa.sort(data,cmp_fecha_país_mayor_menor)
-    low = searchMin(array,end_date, 'date')
-    high = searchMax(array,stardate , 'date')
-    while low <= high:
-        lt.addLast(newArray, lt.getElement(array,low))
-        low+=1
+    
+    for i in lt.iterator(results):
+        date = datetime.datetime.strptime(i['date'],"%Y-%m-%d")
+        if date<= end_date and date>= start_date and i['tournament']== name_tournament:
+            country = i['country']
+            city = i['city']
+            total_paises.add(country)
+            total_ciudades.add(city)
+            if i['home_score'] == i['away_score']:
+                winner = buscar_ganador(shootouts, date, i['home_team'], i ['away_team'])
+            else:
+                winner = 'Unknown'
+            i['winner'] = winner
+            lt.addLast(newarray, i)
+
+
+
+
         
-    return newArray
-
-
-
-def findMatch(name_tournament, data):
-    new_array = lt.newList('ARRAY_LIST')
-    for j in lt.iterator( data):
-        if j['tournament'] == name_tournament:
-            lt.addLast(new_array,j)
-    return new_array
-
-# busqueda binaria a la dereca
-
-def searchMax(data, goal,key ):
-    low, high = 0 , lt.size(data)
-
-    while low<= high:
-        mid = (low + high) // 2
-        f= datetime.datetime.strptime(lt.getElement(data,mid)[key],"%Y-%m-%d" )
-        z = data
-        if f  ==goal :
-            low = mid+1
-        elif f >goal :
-            low = mid+1
-        else:
-            work = True
-            while work:
-                w= datetime.datetime.strptime(lt.getElement(data,low)[key],"%Y-%m-%d" )
-                if datetime.datetime.strptime(lt.getElement(data,low)[key],"%Y-%m-%d" ) >goal:
-                    low+= 1
-                else:
-                    work=False
-                    return low-1
-            
-
-    return  low
-
-#busqueda binaria a al izquierda
-def searchMin(data, goal,key):
-    left, right = 0, lt.size(data) - 1
-    result = -1  # Inicializamos el resultado en -1, lo que significa que no se encontró el elemento
-
-    while left <= right:
-        mid = (right - left) // 2  # Calculamos el punto medio
         
-        f= datetime.datetime.strptime(lt.getElement(data,mid)[key],"%Y-%m-%d" )
-        
-        if f ==  goal:
-            return mid
-             # Continuamos buscando en la mitad izquierda
-        elif f  < goal:
-            right = mid - 1  # Descartamos la mitad izquierda
-            
-        else:
-            work = True
-            while work:
-                w= datetime.datetime.strptime(lt.getElement(data,right)[key],"%Y-%m-%d" )
-                if datetime.datetime.strptime(lt.getElement(data,right)[key],"%Y-%m-%d" ) <goal:
-                    right-= 1
-                else:
-                    work=False
-                    return right+1
 
 
+    size = lt.size(newarray)
+    return newarray, len(total_paises), len(total_ciudades),size
+def buscar_ganador(shootouts,date, home_team, away_team):
+    winner = 'Unkown'
+    for i in lt.iterator(shootouts):
+        datei = datetime.datetime.strptime(i['date'],"%Y-%m-%d")
+        if date == datei and i['home_team'] == home_team and i['away_team'] == away_team:
+            return i['winner']
 
-            
-            # Descartamos la mitad derecha
 
-    return result
 
 def sortmatchAlphabet(data):
    
