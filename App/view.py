@@ -398,7 +398,7 @@ def menu_cycle():
             name_tournament = input(" Ingrese el nombre del Torneo: ")
             start_date = input("Ingrese la fecha de inicio del periodo a consultar (YYYY-MM-DD): ")
             end_date = input("Ingrese la fecha de final del periodo a consultar (YYYY-MM-DD): ")
-            matchs,total_coutries, total_cities, size , sizematches= controller.queryMatchsbyPeriod(name_tournament, start_date, end_date ,control['model']['shootouts'], control['model']['results'])
+            matchs,total_coutries, total_cities, size , sizematches,time= controller.queryMatchsbyPeriod(name_tournament, start_date, end_date ,control['model']['shootouts'], control['model']['results'])
             print("========================== Req No. 4 Inputs ===============")
             print(f"tournament name : {name_tournament}")
             print(f"Start date: {start_date}")
@@ -412,7 +412,7 @@ def menu_cycle():
             else:
                 print("\n the Tournament results has more than 6 records")
             printSimpleTable(matchs,['date','tournament','country','city','home_team','away_team','home_score','away_score','winner'])
-            
+            print("Delta de tiempo fue:", str(time))
 
         elif int(inputs) == 6:
             print("========================== Req No. 5 Inputs ===============")
