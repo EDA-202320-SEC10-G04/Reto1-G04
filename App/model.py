@@ -455,53 +455,18 @@ def buscar_pais(results, goal_date, home_team, away_team):
 
 
 #req4
-def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results):
+def queryMatchsbyPeriod(name_tournament, start_date, end_date,shootouts, results):
     """
     Función que soluciona el requerimiento 4
     """
-    r = lt.newList('ARRAY_LIST')
-    Goals = filterbyPeriod(goalscore,start_date, end_date)
-    Results = filterbyPeriod(results,start_date, end_date)
-    Tmatchs = findMatch(name_tournament, Results)
-    sa.sort(Goals,compare_away)
-    goals =sa.sort(Goals,compare_home)
     newarray = lt.newList('ARRAY_LIST')
-    for element in lt.iterator(Tmatchs):
-        f= searchnameBinary(goals, element['home_team'],'home_team',element['away_team'],'away_team')
-
-        
-        if f !=-1 :
-            a=  lt.getElement(goals,f)['away_team']
-            c = lt.getElement(goals,f)['home_team']
-            z =lt.getElement(goals,f)
-            if element['home_score'] == element['away_score']:
-                element['winner'] = z['team']
-            else:
-                element['winner'] = 'Unknown'
-            lt.addLast(newarray,element)
-        
-
-    g = newarray
-    total_coutries = len(find_repeated(newarray,'country'))
-    total_cities= len(find_repeated(newarray,'city'))
-    size = lt.size(newarray)
-    return newarray, total_coutries, total_cities,size
-
-    
-
-def find_repeated(data,key):
-    
-    list_repeated = []
-    for element in lt.iterator(data):
-        if element[key] not in list_repeated:
-            list_repeated.append(element[key])
-       
-    return list_repeated
-
-def filterbyPeriod(data, stardate, end_date):
-    stardate= datetime.datetime.strptime(stardate,"%Y-%m-%d")
+    goals =sa.sort(shootouts,compare_home)
+    total_paises = set()
+    total_ciudades = set()
+    sa.sort(shootouts,compare_away)
+    start_date= datetime.datetime.strptime(start_date,"%Y-%m-%d")
     end_date = datetime.datetime.strptime(end_date,"%Y-%m-%d")
-    
+    r = lt.newList('ARRAY_LIST')
     for i in lt.iterator(results):
         date = datetime.datetime.strptime(i['date'],"%Y-%m-%d")
         if date<= end_date and date>= start_date and i['tournament']== name_tournament:
@@ -531,6 +496,20 @@ def buscar_ganador(shootouts,date, home_team, away_team):
         datei = datetime.datetime.strptime(i['date'],"%Y-%m-%d")
         if date == datei and i['home_team'] == home_team and i['away_team'] == away_team:
             return i['winner']
+
+
+
+def sortmatchAlphabet(data):
+   
+    sa.sort(data, cmp_fecha_país_mayor_menor)
+    return data
+
+def lenght(data):
+    return lt.size(data)
+    
+
+
+
 
 
 

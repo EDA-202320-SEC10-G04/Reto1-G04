@@ -149,16 +149,14 @@ def queryMatchsbyPeriod(name_tournament, start_date, end_date, goalscore, result
     """
     Retorna el resultado del requerimiento 4
     """
-    start_time = get_time()
     # TODO: Modificar el requerimiento 4
     matchs, total_coutries, total_cities,size = model.queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results)
     sizematches = model.lenght(matchs)
     sortmatchAlphabet = model.sortmatchAlphabet(matchs)
     
     Tmatchs = sixdata(sortmatchAlphabet)
-    end_time = get_time()
-    deltatime = delta_time(start_time, end_time)
-    return Tmatchs, total_coutries, total_cities, size, sizematches,deltatime
+    return Tmatchs, total_coutries, total_cities, size, sizematches
+
 
 
 

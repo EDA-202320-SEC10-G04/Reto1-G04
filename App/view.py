@@ -168,7 +168,7 @@ def print_req_4(control):
         Función que imprime la solución del Requerimiento 4 en consola
     """
     # TODO: Imprimir el resultado del requerimiento 4
-    pass
+
 
 #req 5
 def print_annotations_over_a_period_of_time(total_goals, total_tournaments, penalties, own_goals, player_goals):
@@ -395,7 +395,6 @@ def menu_cycle():
             """PConsultar los partidos relacionados
              con un torneo durante un
             periodo especifico."""
-            print("========================== Req No. 4 Inputs ===============")
             name_tournament = input(" Ingrese el nombre del Torneo: ")
             start_date = input("Ingrese la fecha de inicio del periodo a consultar (YYYY-MM-DD): ")
             end_date = input("Ingrese la fecha de final del periodo a consultar (YYYY-MM-DD): ")
@@ -413,7 +412,6 @@ def menu_cycle():
             else:
                 print("\n the Tournament results has more than 6 records")
             printSimpleTable(matchs,['date','tournament','country','city','home_team','away_team','home_score','away_score','winner'])
-            print(" delta tiempo fue:", str(time))
             
 
         elif int(inputs) == 6:
