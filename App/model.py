@@ -466,7 +466,7 @@ def queryMatchsbyPeriod(name_tournament, start_date, end_date,goalscore, results
     sa.sort(shootouts,compare_away)
     start_date= datetime.datetime.strptime(start_date,"%Y-%m-%d")
     end_date = datetime.datetime.strptime(end_date,"%Y-%m-%d")
-    r = lt.newList('ARRAY_LIST')
+    
     for i in lt.iterator(results):
         date = datetime.datetime.strptime(i['date'],"%Y-%m-%d")
         if date<= end_date and date>= start_date and i['tournament']== name_tournament:
