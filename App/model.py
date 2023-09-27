@@ -108,7 +108,16 @@ def cmp_date_and_minute(data1, data2):
 
  
 
+def cmp_date(data1, data2):
+    # Ordenar primero por fecha
+    date1 = datetime.datetime.strptime(data1['date'], '%Y-%m-%d')
+    date2 = datetime.datetime.strptime(data2['date'], '%Y-%m-%d')
 
+    if date1 < date2:
+        return False
+    elif date1 > date2:
+        return True
+    
 def cmp_fecha_país_mayor_menor(data1, data2):
     # Ordenar primero por fecha, luego por puntaje local y puntaje visitante
     date1 = datetime.datetime.strptime(data1['date'], '%Y-%m-%d')
@@ -418,41 +427,54 @@ def iter_consultar_partidos_equipo_periodo(data_structs, team_name, fecha_inicio
     games_played = lt.newList("ARRAY_LIST")
     
     
-    sa.sort(data_structs["goalscore"], cmp_date_and_minute)
+    sa.sort(data_structs["results"], cmp_date)
     total_games = 0
     total_home_games = 0
     total_away_games = 0
     fecha_inicio = datetime.datetime.strptime(fecha_inicio, '%Y-%m-%d')
     fecha_fin = datetime.datetime.strptime(fecha_fin, '%Y-%m-%d')
 
-    for partido in lt.iterator(data_structs["goalscore"]):
+    for partido in lt.iterator(data_structs["results"]):
         goal_date = datetime.datetime.strptime(partido['date'], '%Y-%m-%d')
-        if fecha_inicio <= goal_date <= fecha_fin and partido["team"].lower() == team_name.lower():
+        if fecha_inicio <= goal_date <= fecha_fin and (partido["home_team"].lower() == team_name.lower() or partido["away_team"].lower() == team_name.lower()):
             total_games += 1
-            tournament, country, city = buscar_pais(data_structs["results"],partido['date'], partido['home_team'], partido['away_team'])
-            
-            if partido["home_team"] == partido["team"]:
+            penalty = buscar_penaltis(data_structs["goalscore"],partido['date'], partido['home_team'], partido['away_team'])
+            own_goal = buscar_autogoles(data_structs["goalscore"],partido['date'], partido['home_team'], partido['away_team'])
+            if partido["home_team"].lower() == team_name.lower():
                 total_home_games += 1
-            if partido["away_team"] == partido["team"]:
+            if partido["away_team"].lower() == team_name.lower():
                 total_away_games += 1
             
-            partido["tournament"] = tournament 
-            partido["country"] = country
-            partido["city"] = city
+            partido["penalty"] = penalty 
+            partido["own_goal"] = own_goal
             lt.addLast(games_played, partido)
     return total_games , total_home_games, total_away_games, games_played
 
-def buscar_pais(results, goal_date, home_team, away_team):
+def buscar_penaltis(results, game_date, home_team, away_team):
     """
-    Busca el nombre del torneo, pais y ciudad en la lista de resultados según la fecha y los equipos.
+    Busca el nombre si hubo penaltis y autogoles en la lista de goles según la fecha y los equipos.
     """
     for result in lt.iterator(results):
         result_date = datetime.datetime.strptime(result['date'], '%Y-%m-%d')
-        if result_date == datetime.datetime.strptime(goal_date, '%Y-%m-%d') and result['home_team'] == home_team and result['away_team'] == away_team:
-            return result['tournament'], result['country'] , result["city"]
+        penalty = False
+        if result_date == datetime.datetime.strptime(game_date, '%Y-%m-%d') and result['home_team'] == home_team and result['away_team'] == away_team:
+            if result['penalty'] == True:
+                penalty = True
+            return penalty
     return 'Desconocido'
 
-
+def buscar_autogoles(results, game_date, home_team, away_team):
+    """
+    Busca el nombre si hubo penaltis y autogoles en la lista de goles según la fecha y los equipos.
+    """
+    for result in lt.iterator(results):
+        result_date = datetime.datetime.strptime(result['date'], '%Y-%m-%d')
+        own_goal = False
+        if result_date == datetime.datetime.strptime(game_date, '%Y-%m-%d') and result['home_team'] == home_team and result['away_team'] == away_team:
+            if result['own_goal'] == True:
+                own_goal = True
+            return own_goal
+    return 'Desconocido'
 
 #req4
 def queryMatchsbyPeriod(name_tournament, start_date, end_date,shootouts, results):
